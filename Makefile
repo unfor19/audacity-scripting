@@ -10,6 +10,7 @@ BASH_PATH:=$(shell which bash)
 
 VENV_DIR_PATH:=${ROOT_DIR}/.VENV
 REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
+AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
@@ -17,11 +18,13 @@ ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
+AUDACITY_TARGET_CONFIG_PATH:="C:\Program Files\Audacity\audacity.cfg"
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
+AUDACITY_TARGET_CONFIG_PATH:=/Applications/Audacity.app/Contents/audacity.cfg
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
@@ -66,6 +69,10 @@ validate-%:
 ##
 ##AUDACITY
 ##--------
+audacity-copy-config:
+	@echo Copying ${AUDACITY_SRC_CONFIG_PATH} file to ${AUDACITY_TARGET_CONFIG_PATH}
+	@cp ${AUDACITY_SRC_CONFIG_PATH} ${AUDACITY_TARGET_CONFIG_PATH}
+
 audacity-start: ## Start Audacity GUI app
 	@echo Starting Audacity
 	@${AUDACITY_BIN_PATH} &

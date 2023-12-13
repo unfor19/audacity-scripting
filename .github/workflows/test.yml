@@ -28,6 +28,8 @@ jobs:
         run: make venv-install-edit
       - name: Install Audacity
         run: choco install -y audacity --version 3.4.2
+      - name: Copy audacity.cfg
+        run: make audacity-copy-config
       - name: Start Audacity
         run: make audacity-start
       - name: Run Tests
