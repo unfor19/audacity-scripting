@@ -4,7 +4,7 @@
 ### Available only during Docker build - `docker build --build-arg ...`
 ### --------------------------------------------------------------------
 ARG PYTHON_VERSION="3.9.0"
-ARG APP_NAME="appy"
+ARG APP_NAME="audacity-scripting"
 ARG APP_ARTIFACT_DIR="artifact/"
 ARG APP_HOME_DIR="/app"
 ARG APP_USER_NAME="appuser"

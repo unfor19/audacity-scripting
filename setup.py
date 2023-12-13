@@ -2,9 +2,9 @@ from os import getcwd, path
 from setuptools import setup
 
 # Change accordingly ----------------------------
-PACKAGE_DIR_NAME = "appy"
+PACKAGE_DIR_NAME = "audacity_scripting"
 GITHUB_OWNER = "unfor19"
-GITHUB_REPOSITORY = "python-project"
+GITHUB_REPOSITORY = "audacity-scripting"
 # -----------------------------------------------
 
 
