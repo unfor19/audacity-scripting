@@ -51,5 +51,4 @@ jobs:
       - name: Re-Start Audacity and Run Tests
         run: |
           make print-vars
-          make audacity-start && \
           make venv-test
