@@ -13,7 +13,12 @@ REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 
 # TODO: Set it - currently getting it from GitHub Actions on Windows
+ifeq ($${CI},true)
+AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
+else
 AUDACITY_PREFERENCES_PATH:=$${AUDACITY_PREFERENCES_PATH}
+endif
+
 
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
@@ -87,6 +92,7 @@ audacity-copy-config:
 
 audacity-update-config:
 	if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
+		echo "Updating ${AUDACITY_PREFERENCES_PATH} file" ; \
 		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/g' "${AUDACITY_PREFERENCES_PATH}" ; \
 	fi
 
