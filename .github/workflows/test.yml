@@ -54,5 +54,6 @@ jobs:
         run: |
           make print-vars
           make audacity-start
+          make audacity-print-config
           pipelist
           make venv-test

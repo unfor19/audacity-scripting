@@ -41,9 +41,7 @@ def calculate_clips_gaps(clips_info):
 def delete_segment(track_index, start, end):
     do_command(
         f"Select: Start={start} End={end} Track={track_index}.0")
-    sleep(0.1)
     do_command('Delete:')
-    sleep(0.1)
 
 
 def remove_spaces_between_clips():

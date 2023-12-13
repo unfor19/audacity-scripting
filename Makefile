@@ -97,6 +97,14 @@ audacity-update-config:
 		cat "${AUDACITY_PREFERENCES_PATH}" ; \
 	fi
 
+audacity-print-config:
+	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
+		cat "${AUDACITY_PREFERENCES_PATH}" ; \
+	else \
+		echo "ERROR: ${AUDACITY_PREFERENCES_PATH} file not found" ; \
+		exit 1 ; \
+	fi
+
 audacity-start: ## Start Audacity GUI app
 	@echo Starting Audacity
 	@${AUDACITY_BIN_PATH} &
