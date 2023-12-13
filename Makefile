@@ -12,22 +12,25 @@ ROOT_DIR:=${CURDIR}
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
+BASH_PATH:="C:/Program Files/Git/usr/bin/bash.exe"
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
+BASH_PATH:=$(shell which bash)
 endif
 # Linux
 ifneq (,$(findstring Linux, $(UNAME)))
 _OS:=linux
+BASH_PATH:=/bin/bash
 endif
 # --- OS Settings --- END --------------------------------------------------------------
 
 VENV_DIR_PATH:=${ROOT_DIR}/.VENV
 REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 
-SHELL:=bash
+SHELL:=${BASH_PATH}
 
 ifneq (,$(findstring venv-,${MAKECMDGOALS}))
 ifneq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))

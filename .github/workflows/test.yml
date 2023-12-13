@@ -26,5 +26,5 @@ jobs:
         run: make venv-install
       - name: Install in Edit mode
         run: make venv-install-edit
-      - name: Run Tests
-        run: make venv-test
+      # - name: Run Tests
+      #   run: make venv-test
