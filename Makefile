@@ -30,11 +30,11 @@ endif
 VENV_DIR_PATH:=${ROOT_DIR}/.VENV
 REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 
-SHELL:=${BASH_PATH}
+SHELL:=bash
 
 ifneq (,$(findstring venv-,${MAKECMDGOALS}))
 ifneq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))
-SHELL:=. ${VENV_DIR_PATH}/bin/activate && ${SHELL}
+SHELL:=. ${VENV_DIR_PATH}/bin/activate && bash
 endif
 endif
 
