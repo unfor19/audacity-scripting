@@ -30,7 +30,7 @@ jobs:
       - name: Install in Edit mode
         run: make venv-install-edit
       - name: Install Audacity
-        run: choco install -y audacity --version 3.4.2
+        run: choco install -y audacity --version 3.4.2 1>/dev/null
       - name: Copy audacity.cfg
         run: make audacity-copy-config
       - name: Get APPDATA Directory
