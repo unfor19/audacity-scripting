@@ -10,6 +10,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  AUDACITY_SCRIPTING_LOGGER_LEVEL: debug
+
 jobs:
   tests:
     runs-on: windows-latest
@@ -30,5 +33,25 @@ jobs:
         run: choco install -y audacity --version 3.4.2
       - name: Copy audacity.cfg
         run: make audacity-copy-config
+      - name: Get APPDATA Directory
+        shell: powershell
+        id: appdata
+        run: |
+          # Get the APPDATA environment variable
+          $appData = "APPDATA=" + $Env:APPDATA
+
+          # Get the GITHUB_OUTPUT file path
+          $githubOutputFilePath = $Env:GITHUB_OUTPUT
+
+          # Append APPDATA to the file specified by GITHUB_OUTPUT
+          Add-Content -Path $githubOutputFilePath -Value $appData
       - name: Start Audacity and Run Tests
-        run: make audacity-start && make venv-test
+        env:
+          APPDATA: ${{ steps.appdata.outputs.GITHUB_OUTPUT }}
+          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.GITHUB_OUTPUT }}\\audacity\\audacity.cfg
+        run: |
+          echo "APPDATA = ${APPDATA}"
+          echo "AUDACITY_PREFERENCES_PATH = ${AUDACITY_PREFERENCES_PATH}"
+          cat "$AUDACITY_PREFERENCES_PATH"
+          make audacity-start && \
+          make venv-test
