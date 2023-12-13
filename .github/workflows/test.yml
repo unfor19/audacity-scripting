@@ -31,8 +31,6 @@ jobs:
         run: make venv-install-edit
       - name: Install Audacity
         run: choco install -y audacity --version 3.4.2 1>/dev/null
-      - name: Copy audacity.cfg
-        run: make audacity-copy-config
       - name: Get APPDATA Directory
         shell: powershell
         id: appdata
@@ -44,6 +42,8 @@ jobs:
           Add-Content -Path $githubOutputFilePath -Value $appData
       - name: Start Audacity for the first time
         run: make audacity-start
+      - name: Update audacity.cfg
+        run: make audacity-update-config
       - name: Kill Audacity
         run: make audacity-kill
       - name: Re-Start Audacity and Run Tests

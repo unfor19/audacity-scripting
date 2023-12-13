@@ -12,6 +12,9 @@ VENV_DIR_PATH:=${ROOT_DIR}/.VENV
 REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 
+# TODO: Set it - currently getting it from GitHub Actions on Windows
+# AUDACITY_PREFERENCES_PATH
+
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
@@ -81,6 +84,11 @@ print-vars:
 audacity-copy-config:
 	@echo Copying ${AUDACITY_SRC_CONFIG_PATH} file to ${AUDACITY_TARGET_CONFIG_PATH}
 	@cp ${AUDACITY_SRC_CONFIG_PATH} ${AUDACITY_TARGET_CONFIG_PATH}
+
+audacity-update-config:
+	if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
+		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/g' "${AUDACITY_PREFERENCES_PATH}" ; \
+	fi
 
 audacity-start: ## Start Audacity GUI app
 	@echo Starting Audacity
