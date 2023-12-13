@@ -67,6 +67,11 @@ audacity_scripting clean-spaces --path "/path/to/my_project.aup3"
 audacity_scripting do-command --command "Select: Track=0 Track=1"
 ```
 
+## References
+
+- Audacity pipes - [https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/](https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/)
+- GitHub Actions Windows Pipes Discussion - [https://github.com/orgs/community/discussions/40540](https://github.com/orgs/community/discussions/40540)
+
 ## Authors
 
 Created and maintained by [Meir Gabay](https://github.com/unfor19)
