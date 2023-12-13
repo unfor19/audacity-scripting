@@ -30,7 +30,9 @@ jobs:
       - name: Install in Edit mode
         run: make venv-install-edit
       - name: Install Audacity
-        run: choco install -y audacity --version 3.4.2 1>/dev/null
+        run: |
+          choco install -y audacity --version 3.4.2 1>/dev/null
+          choco install -y pipelist 1>/dev/null
       # - name: Get APPDATA Directory
       #   shell: powershell
       #   id: appdata
@@ -50,9 +52,8 @@ jobs:
         run: make audacity-update-config
       - name: Start Audacity
         run: |
-          curl -L -o pipelist64.exe https://live.sysinternals.com/pipelist64.exe
           make audacity-start
-          yes | ./pipelist64.exe
+          pipelist
       - name: Kill Audacity
         run: make audacity-kill
       - name: Run Tests
