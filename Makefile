@@ -34,7 +34,7 @@ SHELL:=${BASH_PATH}
 
 ifneq (,$(findstring venv-,${MAKECMDGOALS}))
 ifneq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))
-SHELL:=source ${VENV_DIR_PATH}/bin/activate && ${SHELL}
+SHELL:=source .VENV/bin/activate && ${SHELL}
 endif
 endif
 
