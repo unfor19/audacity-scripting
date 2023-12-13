@@ -19,12 +19,14 @@ _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_TARGET_CONFIG_PATH:="C:\Program Files\Audacity\audacity.cfg"
+AUDACITY_KILL_COMMAND:=taskkill /F /IM Audacity.exe /T
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 AUDACITY_TARGET_CONFIG_PATH:=/Applications/Audacity.app/Contents/audacity.cfg
+AUDACITY_KILL_COMMAND:=killall Audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
@@ -64,6 +66,13 @@ validate-%:
 		exit 1 ; \
 	fi
 
+print-vars:
+	echo "AUDACITY_SRC_CONFIG_PATH=${AUDACITY_SRC_CONFIG_PATH}"
+	echo "AUDACITY_BIN_PATH=${AUDACITY_BIN_PATH}"
+	echo "AUDACITY_TARGET_CONFIG_PATH=${AUDACITY_TARGET_CONFIG_PATH}"
+	echo "VENV_BIN_ACTIVATE=${VENV_BIN_ACTIVATE}"
+	echo "REQUIREMENTS_FILE_PATH=${REQUIREMENTS_FILE_PATH}"
+	echo "VENV_DIR_PATH=${VENV_DIR_PATH}"
 
 # --- Audacity --- START ------------------------------------------------------------
 ##
@@ -76,6 +85,18 @@ audacity-copy-config:
 audacity-start: ## Start Audacity GUI app
 	@echo Starting Audacity
 	@${AUDACITY_BIN_PATH} &
+
+audacity-kill:
+	@echo Killing Audacity
+	@${AUDACITY_KILL_COMMAND}
+
+audacity-print-custom-config:
+	@if [[ -f ${AUDACITY_TARGET_CONFIG_PATH} ]]; then \
+		cat ${AUDACITY_TARGET_CONFIG_PATH} ; \
+	else \
+		echo "ERROR: ${AUDACITY_TARGET_CONFIG_PATH} file not found" ; \
+		exit 1 ; \
+	fi
 # --- Audacity --- END --------------------------------------------------------------
 
 

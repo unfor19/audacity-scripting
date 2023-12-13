@@ -44,6 +44,8 @@ jobs:
           Add-Content -Path $githubOutputFilePath -Value $appData
       - name: Start Audacity for the first time
         run: make audacity-start
+      - name: Kill Audacity
+        run: make audacity-kill
       - name: Re-Start Audacity and Run Tests
         env:
           APPDATA: ${{ steps.appdata.outputs.APPDATA }}
@@ -52,5 +54,7 @@ jobs:
           echo "APPDATA = ${APPDATA}"
           echo "AUDACITY_PREFERENCES_PATH = ${AUDACITY_PREFERENCES_PATH}"
           cat "$AUDACITY_PREFERENCES_PATH"
+          make print-vars
+          make audacity-print-custom-config
           make audacity-start && \
           make venv-test
