@@ -48,10 +48,10 @@ jobs:
         run: make audacity-kill
       - name: Update audacity.cfg
         run: make audacity-update-config
-      - name: Run Audacity
+      - name: Start Audacity
         run: |
           curl -L -o pipelist64.exe https://live.sysinternals.com/pipelist64.exe
-          make audacity-run
+          make audacity-start
           powershell -c "pipelist64.exe"
       - name: Kill Audacity
         run: make audacity-kill
