@@ -36,8 +36,8 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.01):
     # Based on the official pipe_test.py - https://github.com/audacity/audacity/blob/master/scripts/piped-work/pipe_test.py
     if sys.platform == 'win32':
         logger.debug("pipe-test.py, running on windows")
-        TONAME = '\\\\.\\pipe\\ToSrvPipe'
-        FROMNAME = '\\\\.\\pipe\\FromSrvPipe'
+        TONAME = '\\.\pipe\ToSrvPipe'
+        FROMNAME = '\\.\pipe\FromSrvPipe'
         EOL = '\r\n\0'
     else:
         logger.debug("pipe-test.py, running on linux or mac")
