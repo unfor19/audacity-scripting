@@ -94,6 +94,7 @@ audacity-update-config:
 	if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
 		echo "Updating ${AUDACITY_PREFERENCES_PATH} file" ; \
 		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/g' "${AUDACITY_PREFERENCES_PATH}" ; \
+		cat "${AUDACITY_PREFERENCES_PATH}" ; \
 	fi
 
 audacity-start: ## Start Audacity GUI app
