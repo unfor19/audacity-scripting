@@ -37,18 +37,17 @@ jobs:
         shell: powershell
         id: appdata
         run: |
-          # Get the APPDATA environment variable
           $appData = "APPDATA=" + $Env:APPDATA
-
-          # Get the GITHUB_OUTPUT file path
+          print($appData)
           $githubOutputFilePath = $Env:GITHUB_OUTPUT
-
-          # Append APPDATA to the file specified by GITHUB_OUTPUT
+          print($githubOutputFilePath)
           Add-Content -Path $githubOutputFilePath -Value $appData
-      - name: Start Audacity and Run Tests
+      - name: Start Audacity for the first time
+        run: make audacity-start
+      - name: Re-Start Audacity and Run Tests
         env:
           APPDATA: ${{ steps.appdata.outputs.APPDATA }}
-          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.APPDATA }}\\audacity\\audacity.cfg
+          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.APPDATA }}\audacity\audacity.cfg
         run: |
           echo "APPDATA = ${APPDATA}"
           echo "AUDACITY_PREFERENCES_PATH = ${AUDACITY_PREFERENCES_PATH}"
