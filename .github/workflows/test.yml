@@ -6,6 +6,9 @@ on:
       - "README.md"
       - ".github/workflows/release.yml"
       - "scripts/version_validation.sh"
+defaults:
+  run:
+    shell: bash
 
 jobs:
   tests:

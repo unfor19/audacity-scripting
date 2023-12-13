@@ -12,18 +12,15 @@ ROOT_DIR:=${CURDIR}
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
-BASH_PATH:=/usr/bin/bash
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
-BASH_PATH:=$(shell which bash)
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 endif
 # Linux
 ifneq (,$(findstring Linux, $(UNAME)))
 _OS:=linux
-BASH_PATH:=$(shell which bash)
 endif
 # --- OS Settings --- END --------------------------------------------------------------
 
