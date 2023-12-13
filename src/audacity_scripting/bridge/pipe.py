@@ -28,7 +28,7 @@ def get_response(FROMFILE, EOL):
     return result
 
 
-def do_command(command, retry_max_count=20, sleep_seconds=0.05):
+def do_command(command, retry_max_count=20, sleep_seconds=0.01):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
@@ -45,26 +45,26 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.05):
         FROMNAME = '/tmp/audacity_script_pipe.from.' + str(os.getuid())
         EOL = '\n'
     retry_count = 0
+    logger.debug(
+        f'EOL:{json.dumps(EOL)}, TONAME:{TONAME}, FROMNAME:{FROMNAME}')
+    logger.debug("Read from \"" + FROMNAME + "\"")
+    logger.debug("Write to \"" + TONAME + "\"")
     while retry_count < retry_max_count:
-        logger.debug(
-            f'EOL:{json.dumps(EOL)}, TONAME:{TONAME}, FROMNAME:{FROMNAME}')
         if not os.path.exists(TONAME):
             logger.debug(
                 f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
             if retry_count == retry_max_count:
                 sys.exit()
-
-        logger.debug("Read from \"" + FROMNAME + "\"")
         if not os.path.exists(FROMNAME):
             logger.debug(
                 f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
             if retry_count == retry_max_count:
                 sys.exit()
-        logger.debug("-- Both pipes exist.  Good.")
 
         retry_count += 1
         sleep(sleep_seconds)
 
+    logger.debug("-- Both pipes exist.  Good.")
     TOFILE = open(TONAME, 'w')
     logger.debug("-- File to write to has been opened")
     FROMFILE = open(FROMNAME, 'r')
