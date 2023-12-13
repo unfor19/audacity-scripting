@@ -50,13 +50,9 @@ jobs:
         run: make audacity-kill
       - name: Update audacity.cfg
         run: make audacity-update-config
-      - name: Start Audacity
-        run: |
-          make audacity-start
-          pipelist
-      - name: Kill Audacity
-        run: make audacity-kill
       - name: Run Tests
         run: |
           make print-vars
+          make audacity-start
+          pipelist
           make venv-test
