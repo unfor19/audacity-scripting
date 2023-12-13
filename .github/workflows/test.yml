@@ -26,5 +26,7 @@ jobs:
         run: make venv-install
       - name: Install in Edit mode
         run: make venv-install-edit
+      - name: Install Audacity
+        run: choco install -y audacity --version 3.4.2
       # - name: Run Tests
       #   run: make venv-test
