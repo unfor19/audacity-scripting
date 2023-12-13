@@ -37,9 +37,11 @@ jobs:
         run: |
           $appData = "APPDATA=" + $Env:APPDATA
           print($appData)
-          $githubOutputFilePath = $Env:GITHUB_OUTPUT
-          print($githubOutputFilePath)
-          Add-Content -Path $githubOutputFilePath -Value $appData
+          $githubEnvPath = $Env:GITHUB_ENV
+          print($githubEnvPath)
+          Add-Content -Path $githubEnvPath -Value $appData
+          $audacityPreferencesPath = "AUDACITY_PREFERENCES_PATH=" + $Env:APPDATA + "\audacity\audacity.cfg"
+          Add-Content -Path $githubEnvPath -Value $audacityPreferencesPath
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Update audacity.cfg
@@ -47,9 +49,6 @@ jobs:
       - name: Kill Audacity
         run: make audacity-kill
       - name: Re-Start Audacity and Run Tests
-        env:
-          APPDATA: ${{ steps.appdata.outputs.APPDATA }}
-          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.APPDATA }}\audacity\audacity.cfg
         run: |
           echo "APPDATA = ${APPDATA}"
           echo "AUDACITY_PREFERENCES_PATH = ${AUDACITY_PREFERENCES_PATH}"
