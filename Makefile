@@ -13,7 +13,7 @@ REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 
 # TODO: Set it - currently getting it from GitHub Actions on Windows
-# AUDACITY_PREFERENCES_PATH
+AUDACITY_PREFERENCES_PATH=$${AUDACITY_PREFERENCES_PATH}
 
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
