@@ -1,0 +1,16 @@
+# generic
+.*
+!.*ignore*
+*.wiki
+
+# python
+*__pycache__
+ENV/
+
+# docker
+Dockerfile*
+
+# setup
+build/
+dist/
+*.egg-info

@@ -1,0 +1,17 @@
+# generic
+.*
+!.*ignore*
+*.wiki
+!.github
+
+# python
+*__pycache__
+ENV/
+
+# setup
+build/
+dist/
+*.egg-info
+
+# output
+meirg-ascii.txt
