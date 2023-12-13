@@ -78,8 +78,11 @@ venv-install: ## Install Python packages
 ## Provide PACKAGE_NAME=<package_name> to install a specific package
 ## Example: make venv-install PACKAGE_NAME=requests
 	if [[ -f "${REQUIREMENTS_FILE_PATH}" ]]; then \
-		pip install -r ${REQUIREMENTS_FILE_PATH} ${PACKAGE_NAME} ; \
+		echo "Installing packages from ${REQUIREMENTS_FILE_PATH}" && \
+		ls ${REQUIREMENTS_FILE_PATH} && \
+		pip install -r "${REQUIREMENTS_FILE_PATH}" ${PACKAGE_NAME} ; \
 	elif [[ -n "${PACKAGE_NAME}" ]]; then \
+		echo "Installing package ${PACKAGE_NAME}" ; \
 		pip install ${PACKAGE_NAME} ; \
 	else \
 		echo "ERROR: No requirements.txt file found and no package name provided" ; \
