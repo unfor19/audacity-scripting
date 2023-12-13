@@ -65,9 +65,9 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.01):
         sleep(sleep_seconds)
 
     logger.debug("-- Both pipes exist.  Good.")
-    TOFILE = open(TONAME, 'w')
+    TOFILE = open(TONAME, 'wt')
     logger.debug("-- File to write to has been opened")
-    FROMFILE = open(FROMNAME, 'r')
+    FROMFILE = open(FROMNAME, 'rt')
     logger.debug("-- File to read from has now been opened too\r\n")
     send_command(TOFILE, EOL, command)
     response = get_response(FROMFILE, EOL=EOL)
