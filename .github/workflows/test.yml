@@ -22,6 +22,11 @@ jobs:
           cache: "pip"
       - name: Prepare .VENV directory
         run: make venv-prepare && ls .VENV/bin/activate
+      - name: bah
+        run: |
+          ls .VENV/bin/activate 
+          ls /usr/bin/bash
+          . .VENV/bin/activate
       - name: Install Python dependencies
         run: make venv-install
       - name: Install in Edit mode

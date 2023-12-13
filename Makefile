@@ -12,7 +12,7 @@ ROOT_DIR:=${CURDIR}
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
-BASH_PATH:="C:/Program Files/Git/usr/bin/bash.exe"
+BASH_PATH:=C:/Program Files/Git/usr/bin/bash.exe
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
