@@ -31,8 +31,8 @@ jobs:
         run: make venv-install-edit
       - name: Install Audacity
         run: |
-          choco install -y audacity --version 3.4.2 1>/dev/null
-          choco install -y pipelist 1>/dev/null
+          choco install -y audacity --version 3.4.2
+          choco install -y pipelist
       # - name: Get APPDATA Directory
       #   shell: powershell
       #   id: appdata
