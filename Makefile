@@ -16,6 +16,7 @@ REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
+AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
