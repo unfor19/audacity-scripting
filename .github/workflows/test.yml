@@ -47,8 +47,8 @@ jobs:
           Add-Content -Path $githubOutputFilePath -Value $appData
       - name: Start Audacity and Run Tests
         env:
-          APPDATA: ${{ steps.appdata.outputs.GITHUB_OUTPUT }}
-          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.GITHUB_OUTPUT }}\\audacity\\audacity.cfg
+          APPDATA: ${{ steps.appdata.outputs.APPDATA }}
+          AUDACITY_PREFERENCES_PATH: ${{ steps.appdata.outputs.APPDATA }}\\audacity\\audacity.cfg
         run: |
           echo "APPDATA = ${APPDATA}"
           echo "AUDACITY_PREFERENCES_PATH = ${AUDACITY_PREFERENCES_PATH}"
