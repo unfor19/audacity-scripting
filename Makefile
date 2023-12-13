@@ -19,7 +19,7 @@ _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_TARGET_CONFIG_PATH:="C:\Program Files\Audacity\audacity.cfg"
-AUDACITY_KILL_COMMAND:="taskkill /F /IM Audacity.exe /T"
+AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
