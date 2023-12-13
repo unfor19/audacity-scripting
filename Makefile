@@ -13,7 +13,7 @@ REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 
 # TODO: Set it - currently getting it from GitHub Actions on Windows
-ifeq ($${CI},true)
+ifeq (${CI},true)
 AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
 endif
 
@@ -32,7 +32,7 @@ ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 AUDACITY_TARGET_CONFIG_PATH:=/Applications/Audacity.app/Contents/audacity.cfg
-AUDACITY_PREFERENCES_PATH:=$${HOME}//Library/Application Support/audacity/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=${HOME}//Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
@@ -80,6 +80,7 @@ print-vars:
 	echo "VENV_BIN_ACTIVATE=${VENV_BIN_ACTIVATE}"
 	echo "REQUIREMENTS_FILE_PATH=${REQUIREMENTS_FILE_PATH}"
 	echo "VENV_DIR_PATH=${VENV_DIR_PATH}"
+	echo "CI=${CI}"
 
 # --- Audacity --- START ------------------------------------------------------------
 ##
