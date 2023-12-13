@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+    paths-ignore:
+      - "README.md"
+      - ".github/workflows/release.yml"
+      - "scripts/version_validation.sh"
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Prepare .VENV directory
+        run: make venv-prepare
+      - name: Install Python dependencies
+        run: make venv-install
+      - name: Install in Edit mode
+        run: make venv-install-edit
+      - name: Run Tests
+        run: make venv-test
