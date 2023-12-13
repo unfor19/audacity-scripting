@@ -29,10 +29,10 @@ jobs:
         run: make venv-install
       - name: Install in Edit mode
         run: make venv-install-edit
-      - name: Install Audacity
+      - name: Install Tests Requirements
         run: |
-          choco install -y audacity --version 3.4.2
           choco install -y pipelist
+          choco install -y audacity --version 3.4.2
       # - name: Get APPDATA Directory
       #   shell: powershell
       #   id: appdata
