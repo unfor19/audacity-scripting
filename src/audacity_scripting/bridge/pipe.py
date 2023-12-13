@@ -32,18 +32,24 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.01):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
+    WRITE_MODE = ''
+    READ_MODE = ''
     """Send one command, and return the response."""
     # Based on the official pipe_test.py - https://github.com/audacity/audacity/blob/master/scripts/piped-work/pipe_test.py
     if sys.platform == 'win32':
         logger.debug("pipe-test.py, running on windows")
-        TONAME = '\\.\pipe\ToSrvPipe'
-        FROMNAME = '\\.\pipe\FromSrvPipe'
+        TONAME = '\\\\.\\pipe\\ToSrvPipe'
+        FROMNAME = '\\\\.\\pipe\\FromSrvPipe'
         EOL = '\r\n\0'
+        READ_MODE = 'r'
+        WRITE_MODE = 'w'
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
         FROMNAME = '/tmp/audacity_script_pipe.from.' + str(os.getuid())
         EOL = '\n'
+        READ_MODE = 'rt'
+        WRITE_MODE = 'wt'
     retry_count = 0
     logger.debug(
         f'EOL:{json.dumps(EOL)}, TONAME:{TONAME}, FROMNAME:{FROMNAME}')
@@ -65,9 +71,9 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.01):
         sleep(sleep_seconds)
 
     logger.debug("-- Both pipes exist.  Good.")
-    TOFILE = open(TONAME, 'wt')
+    TOFILE = open(TONAME, WRITE_MODE)
     logger.debug("-- File to write to has been opened")
-    FROMFILE = open(FROMNAME, 'rt')
+    FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
     send_command(TOFILE, EOL, command)
     response = get_response(FROMFILE, EOL=EOL)
