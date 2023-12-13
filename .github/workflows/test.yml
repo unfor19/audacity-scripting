@@ -21,7 +21,7 @@ jobs:
           python-version: "3.9"
           cache: "pip"
       - name: Prepare .VENV directory
-        run: make venv-prepare && ls .VENV/bin/activate
+        run: make venv-prepare
       - name: Install Python dependencies
         run: make venv-install
       - name: Install in Edit mode

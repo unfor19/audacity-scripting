@@ -8,30 +8,37 @@ UNAME := $(shell uname)
 ROOT_DIR:=${CURDIR}
 BASH_PATH:=$(shell which bash)
 
+VENV_DIR_PATH:=${ROOT_DIR}/.VENV
+REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
+
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
+VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
-endif
-# Linux
-ifneq (,$(findstring Linux, $(UNAME)))
-_OS:=linux
+VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
-
-VENV_DIR_PATH:=${ROOT_DIR}/.VENV
-REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 
 SHELL:=${BASH_PATH}
 
 ifneq (,$(findstring venv-,${MAKECMDGOALS}))
-ifneq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))
+ifneq (,$(wildcard ${VENV_BIN_ACTIVATE}))
+
+
+ifeq (${_OS},macos)
 SHELL:=source .VENV/bin/activate && ${SHELL}
+endif
+ifeq (${_OS},windows)
+SHELL:=${VENV_BIN_ACTIVATE} && ${SHELL}
+endif
+
+
 endif
 endif
 
