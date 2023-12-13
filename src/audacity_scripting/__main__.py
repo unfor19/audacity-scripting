@@ -1,8 +1,8 @@
-from .core import app
+from .cli.cli import cli
 
 
 def main():
-    app.main()
+    cli()
 
 
 if __name__ == "__main__":

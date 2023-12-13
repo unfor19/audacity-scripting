@@ -18,6 +18,7 @@ endif
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 BASH_PATH:=$(shell which bash)
+AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 endif
 # Linux
 ifneq (,$(findstring Linux, $(UNAME)))
@@ -56,6 +57,17 @@ validate-%:
 	fi
 
 
+# --- Audacity --- START ------------------------------------------------------------
+##
+##AUDACITY
+##--------
+audacity-start: ## Start Audacity GUI app
+	@echo Starting Audacity
+	@${AUDACITY_BIN_PATH} &
+# --- Audacity --- END --------------------------------------------------------------
+
+
+
 # --- VENV --- START ------------------------------------------------------------
 ## 
 ##VENV
@@ -67,12 +79,31 @@ venv-prepare: ## Create a Python virtual environment with venv
 venv-install: ## Install Python packages
 ## Provide PACKAGE_NAME=<package_name> to install a specific package
 ## Example: make venv-install PACKAGE_NAME=requests
-	pip install -r ${REQUIREMENTS_FILE_PATH} ${PACKAGE_NAME}
+	if [[ -f "${REQUIREMENTS_FILE_PATH}" ]]; then \
+		pip install -r ${REQUIREMENTS_FILE_PATH} ${PACKAGE_NAME} ; \
+	elif [[ -n "${PACKAGE_NAME}" ]]; then \
+		pip install ${PACKAGE_NAME} ; \
+	else \
+		echo "ERROR: No requirements.txt file found and no package name provided" ; \
+		exit 1 ; \
+	fi
+
+venv-install-edit: ## Install CLI in editable mode
+	pip install -e .
 
 venv-requirements-update: ## Update requirements.txt with current packages
-	pip freeze > ${REQUIREMENTS_FILE_PATH} && \
+	pip freeze | grep -v '\-e' > ${REQUIREMENTS_FILE_PATH} && \
 	cat ${REQUIREMENTS_FILE_PATH}
 
 venv-freeze: ## List installed packages
 	pip freeze
+
+venv-run: audacity-start ## Run main app script
+	@python main.py
+
+venv-test: audacity-start ## Run tests
+	python -m unittest discover -s tests -p 'test_*.py'
+
+venv-test-clean:
+	rm -f ${ROOT_DIR}/tests/data/*.trimmed.*
 # --- VENV --- END --------------------------------------------------------------

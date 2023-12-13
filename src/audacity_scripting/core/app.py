@@ -1,15 +1,11 @@
-from ..utils import message, img_ascii
+from ..utils.logger import logger
+import os
+app_name = os.getenv('AUDACITY_SCRIPTING_APP_NAME', 'audacity-scripting')
 
 
 def main():
-    image_filename = "meirg-logo.jpg"
-    output_filename = "meirg-ascii.txt"
-    img_ascii.main(image_filename, output_filename)
-
-    name = input("Insert your name: ")
-    message.greet(name)
+    logger.info("Hello World!")
 
 
 if __name__ == "__main__":
-    message.script_path(__file__)
     main()
