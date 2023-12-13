@@ -52,7 +52,7 @@ jobs:
         run: |
           curl -L -o pipelist64.exe https://live.sysinternals.com/pipelist64.exe
           make audacity-start
-          powershell -c "./pipelist64.exe"
+          yes | ./pipelist64.exe
       - name: Kill Audacity
         run: make audacity-kill
       - name: Run Tests
