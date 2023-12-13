@@ -74,7 +74,8 @@ audacity-start: ## Start Audacity GUI app
 ##----
 venv-prepare: ## Create a Python virtual environment with venv
 	python -m venv ${VENV_DIR_PATH} && \
-	python -m pip install -U setuptools pip wheel
+	python -m pip install -U setuptools pip wheel && \
+	ls ${VENV_DIR_PATH}
 
 venv-install: ## Install Python packages
 ## Provide PACKAGE_NAME=<package_name> to install a specific package
