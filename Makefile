@@ -33,7 +33,7 @@ REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 SHELL:=${BASH_PATH}
 
 ifneq (,$(findstring venv-,${MAKECMDGOALS}))
-ifeq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))
+ifneq (,$(wildcard ${VENV_DIR_PATH}/bin/activate))
 SHELL:=. ${VENV_DIR_PATH}/bin/activate && ${SHELL}
 endif
 endif
