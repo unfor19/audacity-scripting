@@ -6,24 +6,21 @@
 
 UNAME := $(shell uname)
 ROOT_DIR:=${CURDIR}
-
+BASH_PATH:=$(shell which bash)
 
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
-BASH_PATH:=C:/Program Files/Git/usr/bin/bash.exe
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
-BASH_PATH:=$(shell which bash)
 endif
 # Linux
 ifneq (,$(findstring Linux, $(UNAME)))
 _OS:=linux
-BASH_PATH:=/usr/bin/bash
 endif
 # --- OS Settings --- END --------------------------------------------------------------
 
