@@ -28,7 +28,7 @@ def get_response(FROMFILE, EOL):
     return result
 
 
-def do_command(command, retry_max_count=10, sleep_seconds=0.01):
+def do_command(command, retry_max_count=20, sleep_seconds=0.05):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
