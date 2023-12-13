@@ -23,7 +23,7 @@ endif
 # Linux
 ifneq (,$(findstring Linux, $(UNAME)))
 _OS:=linux
-BASH_PATH:=/bin/bash
+BASH_PATH:=/usr/bin/bash
 endif
 # --- OS Settings --- END --------------------------------------------------------------
 
