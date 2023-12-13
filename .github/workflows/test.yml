@@ -15,7 +15,7 @@ env:
 
 jobs:
   tests:
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Set up Python
@@ -48,7 +48,7 @@ jobs:
         run: make audacity-kill
       - name: Update audacity.cfg
         run: make audacity-update-config
-      - name: Re-Start Audacity and Run Tests
+      - name: Run Tests
         run: |
           make print-vars
           make venv-test
