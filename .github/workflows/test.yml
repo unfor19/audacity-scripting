@@ -30,7 +30,5 @@ jobs:
         run: choco install -y audacity --version 3.4.2
       - name: Copy audacity.cfg
         run: make audacity-copy-config
-      - name: Start Audacity
-        run: make audacity-start
-      - name: Run Tests
-        run: make venv-test
+      - name: Start Audacity and Run Tests
+        run: make audacity-start && make venv-test
