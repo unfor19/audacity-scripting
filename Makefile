@@ -15,8 +15,6 @@ AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 # TODO: Set it - currently getting it from GitHub Actions on Windows
 ifeq ($${CI},true)
 AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
-else
-AUDACITY_PREFERENCES_PATH:=$${AUDACITY_PREFERENCES_PATH}
 endif
 
 
@@ -34,6 +32,7 @@ ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 AUDACITY_TARGET_CONFIG_PATH:=/Applications/Audacity.app/Contents/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=$${HOME}//Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
@@ -91,10 +90,10 @@ audacity-copy-config:
 	@cp ${AUDACITY_SRC_CONFIG_PATH} ${AUDACITY_TARGET_CONFIG_PATH}
 
 audacity-update-config:
-	if [[ -f "$${AUDACITY_PREFERENCES_PATH}" ]]; then \
-		echo "Updating $${AUDACITY_PREFERENCES_PATH} file" ; \
-		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/g' "$${AUDACITY_PREFERENCES_PATH}" ; \
-		cat "$${AUDACITY_PREFERENCES_PATH}" ; \
+	if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
+		echo "Updating ${AUDACITY_PREFERENCES_PATH} file" ; \
+		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/' "${AUDACITY_PREFERENCES_PATH}" ; \
+		cat "${AUDACITY_PREFERENCES_PATH}" ; \
 	fi
 
 audacity-start: ## Start Audacity GUI app
