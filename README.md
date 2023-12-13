@@ -1,8 +1,6 @@
-# python-project
+# audacity-scripting
 
-This project attempts to consolidate best-practices all around the area of creating a Python package, including the development process, and package distribution process.
-
-Visit this project's [Wiki Pages](https://github.com/unfor19/python-project/wiki) (docs) to learn how it all works.
+WIP: A Python package for managing Audacity programmatically with Python.
 
 ## Quick Start
 
