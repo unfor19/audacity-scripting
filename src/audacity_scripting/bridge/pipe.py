@@ -79,7 +79,8 @@ def do_command(command, retry_max_count=100):
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
         CLOSE_READ = False
-        SLEEP_SECONDS = 0.02
+        CLOSE_WRITE = False
+        SLEEP_SECONDS = 0.03
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
