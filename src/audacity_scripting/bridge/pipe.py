@@ -33,12 +33,13 @@ if sys.platform == 'win32':
                 raise
 
 
-def send_command(TOFILE, EOL, command, close):
+def send_command(TOFILE, EOL, command, close, flush):
     """Send a single command."""
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
-    TOFILE.flush()
+    if flush:
+        TOFILE.flush()
     if close:
         TOFILE.close()
 
@@ -66,7 +67,8 @@ def do_command(command, retry_max_count=100):
     READ_MODE = ''
     CLOSE_READ = True
     CLOSE_WRITE = True
-    SLEEP_SECONDS = 0.05
+    SLEEP_SECONDS = 0.01
+    FLUSH_WRITE = False
     """Send one command, and return the response."""
     # Based on the official pipe_test.py - https://github.com/audacity/audacity/blob/master/scripts/piped-work/pipe_test.py
     if sys.platform == 'win32':
@@ -77,7 +79,8 @@ def do_command(command, retry_max_count=100):
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
         CLOSE_READ = False
-        SLEEP_SECONDS = 0.05
+        SLEEP_SECONDS = 0.02
+        FLUSH_WRITE = True
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
@@ -133,6 +136,9 @@ def do_command(command, retry_max_count=100):
     logger.debug("-- File to write to has been opened")
     FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
-    send_command(TOFILE, EOL, command, close=CLOSE_WRITE)
+    sleep(SLEEP_SECONDS)
+    send_command(TOFILE, EOL, command, close=CLOSE_WRITE, flush=FLUSH_WRITE)
+    sleep(SLEEP_SECONDS)
     response = get_response(FROMFILE, EOL=EOL, close=CLOSE_READ)
+    sleep(SLEEP_SECONDS)
     return response
