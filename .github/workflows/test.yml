@@ -62,5 +62,8 @@ jobs:
           make print-vars
           make audacity-start
           make audacity-print-config
+          echo "Sleeping 10 seconds ..."
+          sleep 10          
           pipelist
+          pipelist | grep FromSrvPipe       
           make venv-test
