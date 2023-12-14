@@ -11,7 +11,7 @@ if sys.platform == 'win32':
 
     def is_named_pipe_open(pipe_name):
         try:
-            # Attempt to open the named pipe
+            # Attempt to open the named pipe with the possibility of it being busy
             handle = win32file.CreateFile(
                 pipe_name,
                 win32file.GENERIC_READ | win32file.GENERIC_WRITE,
@@ -25,11 +25,17 @@ if sys.platform == 'win32':
             win32file.CloseHandle(handle)
             return True
         except pywintypes.error as e:
-            # Check the specific error
             if e.args[0] == 2:  # ERROR_FILE_NOT_FOUND
+                print("No pipe, waiting for server")
+                # Optional: Wait for a bit before returning False
+                sleep(1)
                 return False
             elif e.args[0] == 231:  # ERROR_PIPE_BUSY
+                print("Pipe is busy")
                 return True
+            elif e.args[0] == 109:  # ERROR_BROKEN_PIPE
+                print("Broken pipe detected")
+                return False
             else:
                 raise
 
