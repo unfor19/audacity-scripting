@@ -33,14 +33,12 @@ if sys.platform == 'win32':
                 raise
 
 
-def send_command(TOFILE, EOL, command, close=True):
+def send_command(TOFILE, EOL, command):
     """Send a single command."""
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
     TOFILE.flush()
-    if close:
-        TOFILE.close()
 
 
 def get_response(FROMFILE, EOL, close=True):
@@ -120,6 +118,6 @@ def do_command(command, retry_max_count=21, sleep_seconds=0.01):
     logger.debug("-- File to write to has been opened")
     FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
-    send_command(TOFILE, EOL, command, close=close)
+    send_command(TOFILE, EOL, command)
     response = get_response(FROMFILE, EOL=EOL, close=close)
     return response
