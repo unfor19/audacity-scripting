@@ -79,7 +79,7 @@ def do_command(command, retry_max_count=100):
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
         CLOSE_READ = True
-        CLOSE_WRITE = True
+        CLOSE_WRITE = False
         SLEEP_SECONDS = 0.1
     else:
         logger.debug("pipe-test.py, running on linux or mac")
