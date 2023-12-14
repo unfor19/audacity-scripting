@@ -113,9 +113,9 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.001):
         sleep(sleep_seconds)
 
     logger.debug("-- Both pipes exist.  Good.")
-    TOFILE = open(TONAME, WRITE_MODE, newline=EOL)
+    TOFILE = open(TONAME, WRITE_MODE)
     logger.debug("-- File to write to has been opened")
-    FROMFILE = open(FROMNAME, READ_MODE, newline=EOL)
+    FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
     send_command(TOFILE, EOL, command, close=close)
     response = get_response(FROMFILE, EOL=EOL, close=close)
