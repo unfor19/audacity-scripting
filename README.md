@@ -72,6 +72,7 @@ audacity_scripting do-command --command "Select: Track=0 Track=1"
 - Audacity pipes - [https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/](https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/)
 - GitHub Actions Windows Pipes Discussion - [https://github.com/orgs/community/discussions/40540](https://github.com/orgs/community/discussions/40540)
 - Audacity pipes issue on Windows - [https://forum.audacityteam.org/t/different-errors-running-pipe-test/65305/40](https://forum.audacityteam.org/t/different-errors-running-pipe-test/65305/40)
+- Python and Windows named pipes on Stackoverflow - [https://stackoverflow.com/q/48542644](https://stackoverflow.com/questions/48542644/python-and-windows-named-pipes)
 
 ## Authors
 
