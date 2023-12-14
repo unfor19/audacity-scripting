@@ -43,7 +43,7 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.001):
         TONAME = '\\\\.\\pipe\\ToSrvPipe'
         FROMNAME = '\\\\.\\pipe\\FromSrvPipe'
         EOL = '\r\n\0'
-        READ_MODE = 'r'
+        READ_MODE = 'rt'
         WRITE_MODE = 'w'
         close = False
     else:
@@ -51,7 +51,7 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.001):
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
         FROMNAME = '/tmp/audacity_script_pipe.from.' + str(os.getuid())
         EOL = '\n'
-        READ_MODE = 'r'
+        READ_MODE = 'rt'
         WRITE_MODE = 'w'
     retry_count = 0
     logger.debug(
