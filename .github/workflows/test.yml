@@ -11,7 +11,7 @@ defaults:
     shell: bash
 
 env:
-  AUDACITY_SCRIPTING_LOGGER_LEVEL: info
+  AUDACITY_SCRIPTING_LOGGER_LEVEL: debug
 
 jobs:
   tests:
