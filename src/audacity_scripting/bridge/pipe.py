@@ -21,7 +21,7 @@ if sys.platform == 'win32':
                 None
             )
             # Close the handle if successful
-            win32file.CloseHandle(handle)
+            # win32file.CloseHandle(handle)
             return True
         except pywintypes.error as e:
             # Check the specific error
