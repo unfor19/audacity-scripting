@@ -33,15 +33,17 @@ if sys.platform == 'win32':
                 raise
 
 
-def send_command(TOFILE, EOL, command):
+def send_command(TOFILE, EOL, command, close):
     """Send a single command."""
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
     TOFILE.flush()
+    if close:
+        TOFILE.close()
 
 
-def get_response(FROMFILE, EOL, close=True):
+def get_response(FROMFILE, EOL, close):
     """Return the command response."""
     result = ''
     line = ''
@@ -56,12 +58,15 @@ def get_response(FROMFILE, EOL, close=True):
     return result
 
 
-def do_command(command, retry_max_count=51, sleep_seconds=0.05):
+def do_command(command, retry_max_count=100):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
     WRITE_MODE = ''
     READ_MODE = ''
+    CLOSE_READ = True
+    CLOSE_WRITE = True
+    SLEEP_SECONDS = 0.05
     """Send one command, and return the response."""
     # Based on the official pipe_test.py - https://github.com/audacity/audacity/blob/master/scripts/piped-work/pipe_test.py
     if sys.platform == 'win32':
@@ -71,7 +76,8 @@ def do_command(command, retry_max_count=51, sleep_seconds=0.05):
         EOL = '\r\n\0'
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
-        CLOSE_READ = True
+        CLOSE_READ = False
+        SLEEP_SECONDS = 0.05
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
@@ -79,12 +85,11 @@ def do_command(command, retry_max_count=51, sleep_seconds=0.05):
         EOL = '\n'
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
-        CLOSE_READ = False
-    retry_count = 0
     logger.debug(
         f'EOL:{json.dumps(EOL)}, TONAME:{TONAME}, FROMNAME:{FROMNAME}')
     logger.debug("Read from \"" + FROMNAME + "\"")
     logger.debug("Write to \"" + TONAME + "\"")
+    retry_count = 0
     while retry_count < retry_max_count:
         retry_count += 1
         try:
@@ -121,13 +126,13 @@ def do_command(command, retry_max_count=51, sleep_seconds=0.05):
                 break
         except Exception:
             pass
-        sleep(sleep_seconds)
+        sleep(SLEEP_SECONDS)
 
     logger.debug("-- Both pipes exist.  Good.")
     TOFILE = open(TONAME, WRITE_MODE)
     logger.debug("-- File to write to has been opened")
     FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
-    send_command(TOFILE, EOL, command)
+    send_command(TOFILE, EOL, command, close=CLOSE_WRITE)
     response = get_response(FROMFILE, EOL=EOL, close=CLOSE_READ)
     return response
