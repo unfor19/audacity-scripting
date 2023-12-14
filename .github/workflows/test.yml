@@ -50,6 +50,8 @@ jobs:
         run: make audacity-kill
       - name: Update audacity.cfg
         run: make audacity-update-config
+      - name: Test Audacity Pipe
+        run: python scripts/pipe_test.py
       - name: Run Tests
         run: |
           make print-vars
