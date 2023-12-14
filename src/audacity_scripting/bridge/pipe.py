@@ -44,7 +44,7 @@ def send_command(TOFILE, EOL, command, close, flush):
         TOFILE.close()
 
 
-def get_response(FROMFILE, EOL, close):
+def get_response(FROMFILE, EOL, close, flush):
     """Return the command response."""
     result = ''
     line = ''
@@ -56,6 +56,8 @@ def get_response(FROMFILE, EOL, close):
     logger.debug(f"Result: {result}")
     if close:
         FROMFILE.close()
+    if flush:
+        FROMFILE.flush()
     return result
 
 
@@ -68,6 +70,7 @@ def do_command(command, retry_max_count=100):
     CLOSE_READ = True
     CLOSE_WRITE = True
     SLEEP_SECONDS = 0.01
+    FLUSH_READ = False
     FLUSH_WRITE = False
     """Send one command, and return the response."""
     # Based on the official pipe_test.py - https://github.com/audacity/audacity/blob/master/scripts/piped-work/pipe_test.py
@@ -81,7 +84,7 @@ def do_command(command, retry_max_count=100):
         CLOSE_READ = False
         CLOSE_WRITE = False
         SLEEP_SECONDS = 0.1
-        FLUSH_WRITE = True
+        FLUSH_READ = True
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
@@ -114,22 +117,19 @@ def do_command(command, retry_max_count=100):
                         sys.exit(1)
             else:
                 if not os.path.exists(TONAME):
-                    logger.debug(
-                        f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
                         sys.exit(1)
                 if not os.path.exists(FROMNAME):
-                    logger.debug(
-                        f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
                         sys.exit(1)
                 break
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(
+                f"'{e}. Ensure Audacity is running with mod-script-pipe.")
         sleep(SLEEP_SECONDS)
 
     logger.debug("-- Both pipes exist.  Good.")
@@ -140,6 +140,7 @@ def do_command(command, retry_max_count=100):
     sleep(SLEEP_SECONDS)
     send_command(TOFILE, EOL, command, close=CLOSE_WRITE, flush=FLUSH_WRITE)
     sleep(SLEEP_SECONDS)
-    response = get_response(FROMFILE, EOL=EOL, close=CLOSE_READ)
+    response = get_response(
+        FROMFILE, EOL=EOL, close=CLOSE_READ, flush=FLUSH_READ)
     sleep(SLEEP_SECONDS)
     return response
