@@ -102,14 +102,12 @@ def do_command(command, retry_max_count=100):
         retry_count += 1
         try:
             if sys.platform == 'win32':
-                # if not is_named_pipe_open(TONAME):
-                if not os.path.exists(TONAME):
+                if not is_named_pipe_open(TONAME):
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
                         sys.exit(1)
-                # if not is_named_pipe_open(FROMNAME):
-                if not os.path.exists(FROMNAME):
+                if not is_named_pipe_open(FROMNAME):
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
