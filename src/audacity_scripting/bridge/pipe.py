@@ -78,7 +78,7 @@ def do_command(command, retry_max_count=100):
         EOL = '\r\n\0'
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
-        CLOSE_READ = True
+        CLOSE_READ = False
         CLOSE_WRITE = False
         SLEEP_SECONDS = 0.1
     else:
