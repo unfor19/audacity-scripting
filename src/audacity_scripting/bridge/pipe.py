@@ -21,7 +21,7 @@ if sys.platform == 'win32':
                 None
             )
             # Close the handle if successful
-            # win32file.CloseHandle(handle)
+            win32file.CloseHandle(handle)
             return True
         except pywintypes.error as e:
             # Check the specific error
@@ -80,7 +80,7 @@ def do_command(command, retry_max_count=100):
         WRITE_MODE = 'w'
         CLOSE_READ = False
         CLOSE_WRITE = False
-        SLEEP_SECONDS = 0.03
+        SLEEP_SECONDS = 0.1
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
