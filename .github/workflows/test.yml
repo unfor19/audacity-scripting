@@ -52,8 +52,8 @@ jobs:
         run: make audacity-update-config
       - name: Start Audacity
         run: make audacity-start
-      - name: Test Audacity Pipe
-        run: python scripts/pipe_test.py
+      # - name: Test Audacity Pipe
+      #   run: python scripts/pipe_test.py
       - name: Test Audacity Pipe with win32
         run: |
           python -m pip install pywin32
