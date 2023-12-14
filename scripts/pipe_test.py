@@ -20,8 +20,8 @@ import sys
 
 if sys.platform == 'win32':
     print("pipe-test.py, running on windows")
-    TONAME = '\\\\.\\pipe\\ToSrvPipe'
-    FROMNAME = '\\\\.\\pipe\\FromSrvPipe'
+    TONAME = r'\\.\pipe\ToSrvPipe'
+    FROMNAME = r'\\.\pipe\FromSrvPipe'
     EOL = '\r\n\0'
 else:
     print("pipe-test.py, running on linux or mac")

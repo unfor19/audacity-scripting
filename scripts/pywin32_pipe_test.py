@@ -27,5 +27,5 @@ def is_named_pipe_open(pipe_name):
             raise
 
 
-pipe_name = '\\\\.\\pipe\\FromSrvPipe'
+pipe_name = r'\\.\pipe\FromSrvPipe'
 print(is_named_pipe_open(pipe_name))
