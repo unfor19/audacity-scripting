@@ -58,7 +58,7 @@ def get_response(FROMFILE, EOL, close=True):
     return result
 
 
-def do_command(command, retry_max_count=21, sleep_seconds=0.001):
+def do_command(command, retry_max_count=21, sleep_seconds=0.01):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
@@ -74,7 +74,6 @@ def do_command(command, retry_max_count=21, sleep_seconds=0.001):
         EOL = '\r\n\0'
         READ_MODE = 'rt'
         WRITE_MODE = 'w'
-        close = False
     else:
         logger.debug("pipe-test.py, running on linux or mac")
         TONAME = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
