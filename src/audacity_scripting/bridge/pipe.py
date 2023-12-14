@@ -22,7 +22,7 @@ def get_response(FROMFILE, EOL, close=True):
     while True:
         result += line
         line = FROMFILE.readline()
-        if line == EOL and len(result) > 0:
+        if line == '\n' and len(result) > 0:
             break
     logger.debug(f"Result: {result}")
     if close:
