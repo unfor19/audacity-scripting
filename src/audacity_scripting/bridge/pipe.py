@@ -4,6 +4,34 @@ import sys
 from time import sleep
 from ..utils.logger import logger
 
+if sys.platform == 'win32':
+    import win32file
+    import pywintypes
+
+    def is_named_pipe_open(pipe_name):
+        try:
+            # Attempt to open the named pipe
+            handle = win32file.CreateFile(
+                pipe_name,
+                win32file.GENERIC_READ,
+                0,
+                None,
+                win32file.OPEN_EXISTING,
+                0,
+                None
+            )
+            # Close the handle if successful
+            win32file.CloseHandle(handle)
+            return True
+        except pywintypes.error as e:
+            # Check the specific error
+            if e.args[0] == 2:  # ERROR_FILE_NOT_FOUND
+                return False
+            elif e.args[0] == 231:  # ERROR_PIPE_BUSY
+                return True
+            else:
+                raise
+
 
 def send_command(TOFILE, EOL, command, close=True):
     """Send a single command."""
@@ -30,7 +58,7 @@ def get_response(FROMFILE, EOL, close=True):
     return result
 
 
-def do_command(command, retry_max_count=20, sleep_seconds=0.001):
+def do_command(command, retry_max_count=21, sleep_seconds=0.001):
     TONAME = ''
     FROMNAME = ''
     EOL = ''
@@ -60,56 +88,32 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.001):
     logger.debug("Read from \"" + FROMNAME + "\"")
     logger.debug("Write to \"" + TONAME + "\"")
     while retry_count < retry_max_count:
-        if sys.platform == 'win32':
-            import win32file
-            import pywintypes
-
-            def is_named_pipe_open(pipe_name):
-                try:
-                    # Attempt to open the named pipe
-                    handle = win32file.CreateFile(
-                        pipe_name,
-                        win32file.GENERIC_READ,
-                        0,
-                        None,
-                        win32file.OPEN_EXISTING,
-                        0,
-                        None
-                    )
-                    # Close the handle if successful
-                    win32file.CloseHandle(handle)
-                    return True
-                except pywintypes.error as e:
-                    # Check the specific error
-                    if e.args[0] == 2:  # ERROR_FILE_NOT_FOUND
-                        return False
-                    elif e.args[0] == 231:  # ERROR_PIPE_BUSY
-                        return True
-                    else:
-                        raise
-            if not is_named_pipe_open(TONAME):
-                logger.debug(
-                    f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
-                if retry_count == retry_max_count:
-                    sys.exit()
-            if not is_named_pipe_open(FROMNAME):
-                logger.debug(
-                    f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
-                if retry_count == retry_max_count:
-                    sys.exit()
-        else:
-            if not os.path.exists(TONAME):
-                logger.debug(
-                    f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
-                if retry_count == retry_max_count:
-                    sys.exit()
-            if not os.path.exists(FROMNAME):
-                logger.debug(
-                    f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
-                if retry_count == retry_max_count:
-                    sys.exit()
-
         retry_count += 1
+        try:
+            if sys.platform == 'win32':
+                if not is_named_pipe_open(TONAME):
+                    logger.debug(
+                        f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
+                    if retry_count == retry_max_count:
+                        sys.exit()
+                if not is_named_pipe_open(FROMNAME):
+                    logger.debug(
+                        f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
+                    if retry_count == retry_max_count:
+                        sys.exit()
+            else:
+                if not os.path.exists(TONAME):
+                    logger.debug(
+                        f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
+                    if retry_count == retry_max_count:
+                        sys.exit()
+                if not os.path.exists(FROMNAME):
+                    logger.debug(
+                        f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
+                    if retry_count == retry_max_count:
+                        sys.exit()
+        except Exception:
+            pass
         sleep(sleep_seconds)
 
     logger.debug("-- Both pipes exist.  Good.")
