@@ -92,26 +92,29 @@ def do_command(command, retry_max_count=21, sleep_seconds=0.01):
                     logger.debug(
                         f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
-                        sys.exit()
+                        break
                 if not is_named_pipe_open(FROMNAME):
                     logger.debug(
                         f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
-                        sys.exit()
+                        break
             else:
                 if not os.path.exists(TONAME):
                     logger.debug(
                         f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
-                        sys.exit()
+                        break
                 if not os.path.exists(FROMNAME):
                     logger.debug(
                         f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
                     if retry_count == retry_max_count:
-                        sys.exit()
+                        break
         except Exception:
             pass
         sleep(sleep_seconds)
+    if retry_count == retry_max_count:
+        logger.error("Failed to connect to Audacity with pipes")
+        sys.exit(1)
 
     logger.debug("-- Both pipes exist.  Good.")
     TOFILE = open(TONAME, WRITE_MODE)
