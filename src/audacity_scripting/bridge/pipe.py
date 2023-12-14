@@ -13,7 +13,7 @@ if sys.platform == 'win32':
             # Attempt to open the named pipe
             handle = win32file.CreateFile(
                 pipe_name,
-                win32file.GENERIC_READ,
+                win32file.GENERIC_READ | win32file.GENERIC_WRITE,
                 0,
                 None,
                 win32file.OPEN_EXISTING,
