@@ -1,3 +1,4 @@
+from io import TextIOWrapper
 import json
 import os
 import sys
@@ -33,7 +34,7 @@ if sys.platform == 'win32':
                 raise
 
 
-def send_command(TOFILE, EOL, command, close, flush):
+def send_command(TOFILE: TextIOWrapper, EOL, command, close, flush):
     """Send a single command."""
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
@@ -44,7 +45,7 @@ def send_command(TOFILE, EOL, command, close, flush):
         TOFILE.close()
 
 
-def get_response(FROMFILE, EOL, close, flush):
+def get_response(FROMFILE: TextIOWrapper, EOL, close, flush):
     """Return the command response."""
     result = ''
     line = ''
@@ -101,16 +102,14 @@ def do_command(command, retry_max_count=100):
         retry_count += 1
         try:
             if sys.platform == 'win32':
-                if not is_named_pipe_open(TONAME):
-                    logger.debug(
-                        f"'{TONAME}' does not exist.  Ensure Audacity is running with mod-script-pipe.")
+                # if not is_named_pipe_open(TONAME):
+                if not os.path.exists(TONAME):
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
                         sys.exit(1)
-                if not is_named_pipe_open(FROMNAME):
-                    logger.debug(
-                        f"'{FROMNAME}' does not exist. Ensure Audacity is running with mod-script-pipe.")
+                # if not is_named_pipe_open(FROMNAME):
+                if not os.path.exists(FROMNAME):
                     if retry_count == retry_max_count:
                         logger.error(
                             "Failed to connect to Audacity with pipes")
