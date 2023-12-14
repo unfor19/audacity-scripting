@@ -15,7 +15,7 @@ def send_command(TOFILE, EOL, command, close=True):
         TOFILE.close()
 
 
-def get_response(FROMFILE, EOL):
+def get_response(FROMFILE, EOL, close=True):
     """Return the command response."""
     result = ''
     line = ''
@@ -25,7 +25,8 @@ def get_response(FROMFILE, EOL):
         if line == '\n' and len(result) > 0:
             break
     logger.debug(f"Result: {result}")
-    FROMFILE.close()
+    if close:
+        FROMFILE.close()
     return result
 
 
@@ -79,5 +80,5 @@ def do_command(command, retry_max_count=20, sleep_seconds=0.001):
     FROMFILE = open(FROMNAME, READ_MODE)
     logger.debug("-- File to read from has now been opened too\r\n")
     send_command(TOFILE, EOL, command, close=close)
-    response = get_response(FROMFILE, EOL=EOL)
+    response = get_response(FROMFILE, EOL=EOL, close=close)
     return response
