@@ -100,7 +100,7 @@ audacity-start: ## Start Audacity GUI app
 	@${AUDACITY_BIN_PATH} &
 	@if [[ "${CI}" = "true" && "${_OS}" = "windows" ]]; then \
 		sleep 3 ; \
-		powershell -ExecutionPolicy Bypass -File scripts/init_audacity.ps1 && ; \
+		powershell -ExecutionPolicy Bypass -File scripts/init_audacity.ps1 && \
 		pipelist ; \
 	fi
 
