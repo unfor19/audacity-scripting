@@ -20,6 +20,12 @@ VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_PREFERENCES_PATH:=${APPDATA}/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
+
+# TODO: Set it - currently getting it from GitHub Actions on Windows
+ifeq (${CI},true)
+AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
+endif
+
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
@@ -81,10 +87,13 @@ print-vars:
 audacity-update-config:
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
 		echo "Updating ${AUDACITY_PREFERENCES_PATH} file" ; \
-		sed -i.bak 's/[mod-script-pipe=4]/mod-script-pipe=1/' "${AUDACITY_PREFERENCES_PATH}" ; \
+		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/' "${AUDACITY_PREFERENCES_PATH}" ; \
 		sed -i.bak 's/UpdateNoticeShown=0/UpdateNoticeShown=1/' "${AUDACITY_PREFERENCES_PATH}" ; \
-		sed -i.bak 's/^.*aup3unsaved.*//' "${AUDACITY_PREFERENCES_PATH}" ; \
 		cat "${AUDACITY_PREFERENCES_PATH}" ; \
+		grep 'mod-script-pipe=1' "${AUDACITY_PREFERENCES_PATH}" ; \
+	else \
+		echo "ERROR: ${AUDACITY_PREFERENCES_PATH} file not found" ; \
+		exit 1 ; \
 	fi
 
 audacity-print-config:
@@ -98,11 +107,18 @@ audacity-print-config:
 audacity-start: ## Start Audacity GUI app
 	@echo Starting Audacity ...
 	@${AUDACITY_BIN_PATH} &
-	@if [[ "${CI}" = "true" && "${_OS}" = "windows" ]]; then \
-		sleep 3 ; \
-		powershell -ExecutionPolicy Bypass -File scripts/init_audacity.ps1 && \
-		pipelist ; \
+	@if [[ "${_CI}" = "true" ]]; then \
+		echo "Sleeping 10 seconds to allow Audacity to start the pipes ..." ; \
+		sleep 10 ; \
+		echo "Hopefully Audacity is up" ; \
 	fi
+
+audacity-test-pipe:
+	@if [[ "${_OS}" = "windows" ]]; then \
+		pipelist ; \
+		pipelist | grep SrvPipe ; \
+	fi
+	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
 audacity-kill:
 	${AUDACITY_KILL_COMMAND}
@@ -153,5 +169,16 @@ venv-test: ## Run tests
 	python -m unittest discover -s tests -p 'test_*.py'
 
 venv-test-clean:
-	rm -f ${ROOT_DIR}/tests/data/*.trimmed.*
+	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
 # --- VENV --- END --------------------------------------------------------------
+
+
+# --- Wrapper --- START ------------------------------------------------------------
+##
+###Wrapper
+##---
+wrapper-prepare-test:
+	$(MAKE) audacity-kill || true
+	$(MAKE) venv-test-clean
+	$(MAKE) audacity-start
+# --- Wrapper --- END --------------------------------------------------------------

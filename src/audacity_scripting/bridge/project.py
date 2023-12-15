@@ -2,7 +2,7 @@ from .pipe import do_command
 
 
 def save_project():
-    return do_command(f'Save:')
+    return do_command(f'SaveProject:')
 
 
 def save_project_as(file_path):

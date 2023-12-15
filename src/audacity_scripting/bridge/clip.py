@@ -4,14 +4,43 @@ from .pipe import do_command
 
 
 class Clip(object):
+    _registry = []
+    _tracks = []
+
     def __init__(self, raw_clip):
-        self.start = raw_clip['start']
-        self.end = raw_clip['end']
+        self.start = round(raw_clip['start'], 5)
+        self.end = round(raw_clip['end'], 5)
+        if self.start <= 0.0:
+            self.start = 0.0
+        self.duration = round(self.end - self.start, 5)
+        self.end = round(self.start + self.duration, 5)
         self.track = raw_clip['track']
         self.color = raw_clip['color']
 
+    @classmethod
+    def to_json(cls):
+        json_list = [clip.__str__() for clip in cls._registry]
+        return json_list
+
+    @classmethod
+    def to_objects(self):
+        return self._registry
+
+    def __str__(self):
+        return json.dumps({
+            "start": self.start,
+            "end": self.end,
+            "duration": self.duration,
+            "track": self.track,
+            "color": self.color
+        })
+
+    @classmethod
+    def get_num_tracks(cls):
+        return len(cls._tracks)
+
     @staticmethod
-    def get_clips() -> list[dict]:
+    def get_clips() -> [object]:
         """
         Gets current clips in the project
         Returns: list of clips objects
@@ -35,6 +64,15 @@ class Clip(object):
             # Sorting the data by track and then by start time to ensure correct ordering
             clips_sorted = sorted(
                 clips_obj, key=lambda x: (x['track'], x['start']))
-            return clips_sorted
-
+            clips_final = []
+            for raw_clip in clips_sorted:
+                if raw_clip['start'] >= 0.0 and raw_clip['end'] > 0.0:
+                    raw_clip['_id'] = "" + \
+                        str(raw_clip['track']) + \
+                        str(round(raw_clip['start'], 5))
+                    clips_final.append(Clip(raw_clip))
+                    if raw_clip['track'] not in Clip._tracks:
+                        Clip._tracks.append(raw_clip['track'])
+            Clip._registry = clips_final
+            return clips_final
         return clips_raw_result

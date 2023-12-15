@@ -11,7 +11,7 @@ defaults:
     shell: bash
 
 env:
-  AUDACITY_SCRIPTING_LOGGER_LEVEL: debug
+  AUDACITY_SCRIPTING_LOGGER_LEVEL: info
 
 jobs:
   tests:
@@ -41,9 +41,8 @@ jobs:
         run: make audacity-update-config
       - name: Start Audacity
         run: make audacity-start
-
       - name: Test Audacity Pipe
-        run: python scripts/audacity_pipetest.py
+        run: make audacity-test-pipe
       - name: Run Tests
         run: |
           make print-vars
