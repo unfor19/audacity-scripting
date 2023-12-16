@@ -134,7 +134,7 @@ audacity-restart: audacity-kill audacity-start
 ##----
 venv-prepare: ## Create a Python virtual environment with venv
 	python -m venv ${VENV_DIR_PATH} && \
-	python -m pip install -U setuptools pip wheel twine urllib3 && \
+	python -m pip install -U setuptools pip wheel twine==3.1.1 && \
 	ls ${VENV_DIR_PATH}
 
 venv-install: ## Install Python packages
