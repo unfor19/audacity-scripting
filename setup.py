@@ -14,7 +14,7 @@ PACKAGE_VERSION = getenv('PACKAGE_VERSION', DEFAULT_PACKAGE_VERSION)
 SOURCE_VERSION_PATH = path.join(getcwd(), 'version')
 TARGET_VERSION_PATH = path.join(
     getcwd(),
-    'src', PACKAGE_DIR_NAME, '__version__.py'
+    'src', PACKAGE_DIR_NAME, 'utils', '__version__.py'
 )
 
 if PACKAGE_VERSION == DEFAULT_PACKAGE_VERSION:

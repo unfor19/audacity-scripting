@@ -4,6 +4,7 @@ from ..bridge.pipe import do_command as _do_command
 from .config import pass_config
 from ..bridge.wrappers import remove_spaces_between_clips, open_project_copy
 from ..utils.logger import logger
+from ..utils.version import get_version
 
 
 class AliasedGroup(click.Group):
@@ -13,10 +14,12 @@ class AliasedGroup(click.Group):
             "t": "testing",
             "r": "raw",
             "d": "do",
+            "v": "version"
         }
         action_aliases = {
             "s": "spaces",
-            "c": "command"
+            "c": "command",
+            "p": "print"
         }
         if len(cmd_name) == 2:
             words = []
@@ -77,6 +80,12 @@ def do_command(command):
     """
     response = _do_command(command)
     print(response)
+
+
+@cli.command()
+def version_print():
+    """Get the version from the version file."""
+    logger.info(get_version())
 
 
 @cli.command()
