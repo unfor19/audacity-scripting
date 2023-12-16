@@ -2,11 +2,9 @@
 
 A Python wrapper for the [Audacity Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
 
-📣 **IMPORTANT**: Currently tested only macOS
-
 ## Requirements
 
-- Install [Python 3.6+](https://www.python.org/downloads/)
+- Install [Python 3.9+](https://www.python.org/downloads/)
 - Install [Audacity](https://www.audacityteam.org/download/)
 - Audacity - Enable [mod-script-pipe](https://manual.audacityteam.org/man/scripting.html)
   - Run Audacity
