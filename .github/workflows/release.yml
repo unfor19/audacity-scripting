@@ -37,7 +37,7 @@ jobs:
       - name: Prepare .VENV directory
         run: make venv-prepare
       - name: Install Python dependencies
-        run: make venv-install PACKAGE_NAME=pywin32
+        run: make venv-install
       - name: Set Release Version - GitHub Release
         if: github.event_name != 'workflow_dispatch'
         run: |
