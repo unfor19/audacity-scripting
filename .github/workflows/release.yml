@@ -12,11 +12,11 @@ on:
         required: true
         default: "23.23.23rc23"
 
-# TODO: Check why it doesn't work with PyPi's Truster Publisher
+# TODO: Check why "id-token" doesn't work with PyPi's Truster Publisher
 # https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
 permissions:
-  contents: read
   id-token: write
+  contents: write # To create the tag for workflow_dispatch
 
 run-name: Published ${{ inputs.PACKAGE_VERSION }} by @${{ github.actor }}
 
@@ -63,3 +63,14 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USER_NAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: make publish
+      - name: Create tag
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ env.PACKAGE_VERSION }}',
+              sha: context.sha
+            })
