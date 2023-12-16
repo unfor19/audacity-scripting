@@ -207,4 +207,8 @@ wrapper-prepare-test:
 	$(MAKE) audacity-kill || true
 	$(MAKE) venv-test-clean
 	$(MAKE) audacity-start
+
+wrapper-run-test: wrapper-prepare-test
+	sleep 6
+	$(MAKE) venv-test
 # --- Wrapper --- END --------------------------------------------------------------
