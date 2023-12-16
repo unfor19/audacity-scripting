@@ -24,7 +24,7 @@ class WrappersTestCase(TestCase):
         Clip.get_clips()
         expected_clips_info = Clip.to_json()
         logger.info(f"expected_clips_info: {expected_clips_info}")
-        self.assertTrue(new_clips_info == expected_clips_info)
+        self.assertTrue(result and new_clips_info == expected_clips_info)
 
     def test_2_raw_command(self):
         result = do_command("Select: Start=0.0 Track=0.0")
