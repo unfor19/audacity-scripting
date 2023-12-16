@@ -12,6 +12,7 @@ on:
         required: true
         default: "23.23.23rc23"
 
+# TODO: Check why it doesn't work with PyPi's Truster Publisher
 # https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
 permissions:
   contents: read
@@ -57,4 +58,6 @@ jobs:
       - name: Publish to PyPi
         env:
           TWINE_NON_INTERACTIVE: true
+          TWINE_USERNAME: ${{ secrets.PYPI_USER_NAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: make publish
