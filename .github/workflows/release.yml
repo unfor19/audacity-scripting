@@ -5,11 +5,20 @@ name: Release to PyPi
 on:
   release:
     types: [published, edited]
+  workflow_dispatch:
+    inputs:
+      PACKAGE_VERSION:
+        description: "Package Version"
+        required: true
+        default: "23.23.23rc23"
 
 # https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
 permissions:
   contents: read
   id-token: write
+
+env:
+  PACKAGE_VERSION: ${{ github.event.inputs.PACKAGE_VERSION }}
 
 jobs:
   publish:
@@ -29,11 +38,16 @@ jobs:
         run: make venv-prepare
       - name: Install Python dependencies
         run: make venv-install PACKAGE_NAME=pywin32
-      - name: Set Release Version
+      - name: Set Release Version - GitHub Release
+        if: github.event_name != 'workflow_dispatch'
         run: |
           export PACKAGE_VERSION=${GITHUB_REF_SLUG}
           echo -n $PACKAGE_VERSION > ./version
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+      - name: Set Release Version - Workflow Dispatch
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo -n $PACKAGE_VERSION > ./version
       - name: Validate Release Version
         run: make validate-release-version PACKAGE_NAME=${PACKAGE_VERSION}
       - name: Build Package
