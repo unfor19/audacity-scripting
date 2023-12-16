@@ -12,10 +12,10 @@ ENV/
 build/
 dist/
 *.egg-info
+__version__.py
+version
 
-# output
-meirg-ascii.txt
-
+# Tests output
 *aup3-wal
 *.output.*
-*.bak
+*.bak*

@@ -134,7 +134,7 @@ audacity-restart: audacity-kill audacity-start
 ##----
 venv-prepare: ## Create a Python virtual environment with venv
 	python -m venv ${VENV_DIR_PATH} && \
-	python -m pip install -U setuptools pip wheel && \
+	python -m pip install -U setuptools pip wheel twine==3.1.1 && \
 	ls ${VENV_DIR_PATH}
 
 venv-install: ## Install Python packages
@@ -162,7 +162,7 @@ venv-requirements-update: ## Update requirements.txt with current packages
 venv-freeze: ## List installed packages
 	pip freeze
 
-venv-run: audacity-start ## Run main app script
+venv-run: ## Run main app script
 	@python main.py
 
 venv-test: ## Run tests
@@ -170,7 +170,33 @@ venv-test: ## Run tests
 
 venv-test-clean:
 	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
+
+.venv-build: 
+	python setup.py sdist bdist_wheel
+
+.venv-publish: 
+	twine upload dist/*
+
+.venv-validate-release-package:
+	twine check ${ROOT_DIR}/dist/*	
 # --- VENV --- END --------------------------------------------------------------
+
+
+# --- Release --- START ------------------------------------------------------------
+##
+###Release
+##---
+validate-release-version: validate-PACKAGE_VERSION 
+	@echo ${PACKAGE_VERSION} > ${ROOT_DIR}/version && \
+	${ROOT_DIR}/scripts/version_validation.sh ${PACKAGE_VERSION}
+
+build: .venv-build ## Build the package
+
+validate-release-package: .venv-validate-release-package ## Validate the package with twine
+
+publish: .venv-publish ## Publish the package
+# --- Release --- END --------------------------------------------------------------
+
 
 
 # --- Wrapper --- START ------------------------------------------------------------
