@@ -18,6 +18,8 @@ permissions:
   contents: read
   id-token: write
 
+run-name: Published to ${{ inputs.PACKAGE_VERSION }} by @${{ github.actor }}
+
 env:
   PACKAGE_VERSION: ${{ github.event.inputs.PACKAGE_VERSION }}
 
