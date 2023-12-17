@@ -1,11 +1,7 @@
 import time
 import sys
 import os
-
-# wrapt_timeout_decorator is used to timeout the function call
-import multiprocessing
-from wrapt_timeout_decorator import *
-###############################################
+from wrapt_timeout_decorator import timeout
 
 from ..utils.logger import logger
 
@@ -44,7 +40,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
     return result
 
 
-@timeout(10)
+@timeout(7)  # Lucky Number Slevin (2006)
 def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
