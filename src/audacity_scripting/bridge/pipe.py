@@ -12,7 +12,7 @@ else:
     pass
 
 
-@timeout(1)
+@timeout(2)
 def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     """Send a single command."""
     time.sleep(sleep_seconds)
@@ -26,7 +26,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
         time.sleep(sleep_seconds)
 
 
-@timeout(1)
+@timeout(2)
 def get_response(FROMFILE, sleep_seconds=0.01):
     """Return the command response."""
     time.sleep(sleep_seconds)
@@ -41,7 +41,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
     return result
 
 
-@timeout(1)
+@timeout(2)
 def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
@@ -95,16 +95,17 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
             win32file.CloseHandle(pipe_send)
 
 
-@timeout(3)
+@timeout(5)
 def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
     while retry_count < retry_max_count:
         try:
             return do_command_(CMD)
         except Exception as e:
-            retry_count += 1
             logger.error(
                 f"Error while executing command. Retrying {retry_count}/{retry_max_count}...\n{e}")
             time.sleep(sleep_seconds)
+        finally:
+            retry_count += 1
 
 
 if __name__ == '__main__':
