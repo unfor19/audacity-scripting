@@ -1,6 +1,7 @@
 import time
 import sys
 import os
+from wrapt_timeout_decorator import timeout
 from ..utils.logger import logger
 
 if sys.platform == 'win32':
@@ -11,6 +12,7 @@ else:
     pass
 
 
+@timeout(1)
 def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     """Send a single command."""
     time.sleep(sleep_seconds)
@@ -24,6 +26,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
         time.sleep(sleep_seconds)
 
 
+@timeout(1)
 def get_response(FROMFILE, sleep_seconds=0.01):
     """Return the command response."""
     time.sleep(sleep_seconds)
@@ -38,6 +41,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
     return result
 
 
+@timeout(1)
 def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
@@ -85,20 +89,21 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
             logger.debug(f"Response:\n{response}")
             return response
     except Exception as e:
-        raise e
+        raise Exception(f"Exception: {e}")
     finally:
         if sys.platform == 'win32':
             win32file.CloseHandle(pipe_send)
 
 
-def do_command(CMD, retry_count=0, retry_max_count=10, sleep_seconds=0.05):
+@timeout(3)
+def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
     while retry_count < retry_max_count:
         try:
             return do_command_(CMD)
         except Exception as e:
             retry_count += 1
             logger.error(
-                f"Error while executing command. Retrying {retry_count}/{retry_max_count}...")
+                f"Error while executing command. Retrying {retry_count}/{retry_max_count}...\n{e}")
             time.sleep(sleep_seconds)
 
 
