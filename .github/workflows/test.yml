@@ -39,12 +39,17 @@ jobs:
         run: make audacity-kill
       - name: Update audacity.cfg
         run: make audacity-update-config
-      - name: Start Audacity
-        run: make audacity-start
-      - name: Test Audacity Pipe
-        run: make audacity-test-pipe
-      - name: Run Tests
+      - name: Prepare for test
+        run: make wrapper-prepare-test
+      - name: Print vars and configurations before running tests
         run: |
           make print-vars
           make audacity-print-config
-          make venv-test
+      - name: Test Audacity Pipe
+        run: make audacity-test-pipe
+      - name: Test Audacity Pipe Again - Make sure pipe is up
+        run: make audacity-test-pipe
+      - name: Run Unit Tests
+        run: make venv-test-unittests
+      - name: Run CLI Tests
+        run: make venv-test-cli

@@ -165,8 +165,13 @@ venv-freeze: ## List installed packages
 venv-run: ## Run main app script
 	@python main.py
 
-venv-test: ## Run tests
+venv-test-unittests: ## Run unit tests
 	python -m unittest discover -s tests -p 'test_*.py'
+
+venv-test: venv-test-unittests
+
+venv-test-cli: venv-install-edit ## Run CLI tests
+	audacity_scripting clean-spaces --file_path ${ROOT_DIR}/tests/data/input/1.aup3
 
 venv-test-clean:
 	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
@@ -207,4 +212,8 @@ wrapper-prepare-test:
 	$(MAKE) audacity-kill || true
 	$(MAKE) venv-test-clean
 	$(MAKE) audacity-start
+
+wrapper-run-test: wrapper-prepare-test
+	sleep 6
+	$(MAKE) venv-test
 # --- Wrapper --- END --------------------------------------------------------------
