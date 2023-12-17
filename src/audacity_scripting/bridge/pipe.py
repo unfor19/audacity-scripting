@@ -95,7 +95,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
             win32file.CloseHandle(pipe_send)
 
 
-@timeout(5)
+@timeout(60)
 def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
     while retry_count < retry_max_count:
         try:
