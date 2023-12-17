@@ -8,11 +8,9 @@ import os
 import shutil
 
 
-def open_project_copy(file_path, file_extra_label="", sleep_seconds=0.5):
+def open_project_copy(file_path, file_extra_label=".output", sleep_seconds=0.5):
     file_name, file_extension = os.path.splitext(file_path)
-    new_file_path = f"{file_name}.output.{file_extension}"
-    if len(file_extra_label) > 0:
-        new_file_path = f"{file_name}.output.{file_extra_label}{file_extension}"
+    new_file_path = f"{file_name}{file_extra_label}{file_extension}"
     shutil.copyfile(file_path, new_file_path)
     sleep(sleep_seconds)
     if os.path.exists(new_file_path):

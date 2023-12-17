@@ -12,15 +12,16 @@ test_file_relative_path = 'tests/data/input/1.aup3'
 class WrappersTestCase(TestCase):
     def test_1_remove_spaces_between_clips(self):
         test_file_path = Path.cwd().joinpath(test_file_relative_path)
+        file_extra_label = ".output"
         expected_file_path = Path.cwd().joinpath(
             'tests/data/expected/1.expected.remove_spaces_between_clips.aup3')
         new_file_path = open_project_copy(
-            test_file_path, 'remove_spaces_between_clips')
+            test_file_path, file_extra_label)
         result = remove_spaces_between_clips(new_file_path)
         Clip.get_clips()
         new_clips_info = Clip.to_json()
         logger.info(f"new_clips_info: {new_clips_info}")
-        open_project_copy(expected_file_path)
+        open_project_copy(expected_file_path, file_extra_label)
         Clip.get_clips()
         expected_clips_info = Clip.to_json()
         logger.info(f"expected_clips_info: {expected_clips_info}")

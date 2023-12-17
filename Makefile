@@ -174,7 +174,7 @@ venv-test-cli: venv-install-edit ## Run CLI tests
 	audacity_scripting clean-spaces --file_path ${ROOT_DIR}/tests/data/input/1.aup3
 
 venv-test-clean:
-	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
+	rm ${ROOT_DIR}/tests/data/**/*.output.* || true
 
 .venv-build: 
 	python setup.py sdist bdist_wheel
