@@ -1,7 +1,12 @@
 import time
 import sys
 import os
-from wrapt_timeout_decorator import timeout
+
+# wrapt_timeout_decorator is used to timeout the function call
+import multiprocessing
+from wrapt_timeout_decorator import *
+###############################################
+
 from ..utils.logger import logger
 
 if sys.platform == 'win32':
