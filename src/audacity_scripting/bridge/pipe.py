@@ -12,7 +12,7 @@ else:
     pass
 
 
-@timeout(2)
+@timeout(5)
 def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     """Send a single command."""
     time.sleep(sleep_seconds)
@@ -26,7 +26,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
         time.sleep(sleep_seconds)
 
 
-@timeout(2)
+@timeout(5)
 def get_response(FROMFILE, sleep_seconds=0.01):
     """Return the command response."""
     time.sleep(sleep_seconds)
@@ -41,7 +41,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
     return result
 
 
-@timeout(2)
+@timeout(10)
 def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
@@ -88,6 +88,8 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.01):
             time.sleep(sleep_seconds)
             logger.debug(f"Response:\n{response}")
             return response
+    except OSError as e:
+        raise Exception(f"Waiting for pipe to be ready ...")
     except Exception as e:
         raise Exception(f"Exception: {e}")
     finally:
