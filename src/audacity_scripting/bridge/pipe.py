@@ -19,22 +19,18 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
-    if sys.platform == 'win32':
-        logger.debug("TOFILE Written")
-        TOFILE.flush()
-        logger.debug("TOFILE Flushed")
-        time.sleep(sleep_seconds)
+    TOFILE.flush()
 
 
 def get_response(FROMFILE, sleep_seconds=0.01):
     """Return the command response."""
     time.sleep(sleep_seconds)
     result = ''
-    line = ''
+    line = FROMFILE.readline()
     while True:
         result += line
         line = FROMFILE.readline()
-        if line == '\n' and len(result) > 0:
+        if line == '\n':
             break
     logger.debug(f"Result: {result}")
     return result
