@@ -1,3 +1,4 @@
+from collections import defaultdict
 from copy import deepcopy
 from ..utils.logger import logger
 from .pipe import do_command
@@ -23,22 +24,15 @@ def open_project_copy(file_path, file_extra_label=".output", sleep_seconds=0.5):
 def calculate_clips_gaps(clips_info):
     if not clips_info:
         clips_info = Clip.get_clips()
-    gaps = {}
-    for i in range(len(clips_info) - 1):
-        current_clip: Clip = clips_info[i]
-        next_clip: Clip = clips_info[i + 1]
+    gaps = defaultdict(list)
 
-        # Check if the next clip is in the same track
-        if current_clip.track == next_clip.track \
-                and current_clip.end != next_clip.start:
-            if current_clip.track not in gaps:
-                gaps[current_clip.track] = []
-            gap = {
+    for current_clip, next_clip in zip(clips_info, clips_info[1:]):
+        if current_clip.track == next_clip.track and current_clip.end != next_clip.start:
+            gaps[current_clip.track].append({
                 "start": current_clip.end,
                 "end": next_clip.start
-            }
-            gaps[current_clip.track].append(gap)
-    return gaps
+            })
+    return dict(gaps)
 
 
 def select_clip(track_index, start, end):
@@ -95,29 +89,23 @@ def move_track(track_index, new_track_index):
     return True
 
 
-def calculate_new_positions(clips_objects: [Clip]) -> [object]:
-    # Organize clips by track
-    tracks = {}
-    clips_old_positions = deepcopy(clips_objects)
-    for clip in clips_old_positions:
-        track = clip.track
-        if track not in tracks:
-            tracks[track] = []
-        tracks[track].append(clip)
-    clips_new_positions = []
-    for track, track_clips in tracks.items():
-        # Sort clips by start time to ensure correct order
-        track_clips.sort(key=lambda x: x.start)
+def calculate_new_positions(clips_objects):
+    tracks = defaultdict(list)
+    for clip in clips_objects:
+        tracks[clip.track].append(clip)
 
-        # Initialize the start time for the first clip
+    clips_new_positions = []
+    for track_clips in tracks.values():
+        track_clips.sort(key=lambda x: x.start)
         current_start_time = 0.0
 
-        # Adjust start and end times for each clip
         for clip in track_clips:
-            clip.start = current_start_time
-            clip.end = round(current_start_time + clip.duration, 5)
-            current_start_time = clip.end
-            clips_new_positions.append(clip)
+            new_clip = clip.copy()
+            new_clip.start = current_start_time
+            new_clip.end = round(current_start_time + new_clip.duration, 5)
+            current_start_time = new_clip.end
+            clips_new_positions.append(new_clip)
+
     return clips_new_positions
 
 

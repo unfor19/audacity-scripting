@@ -3,76 +3,64 @@ import json
 from .pipe import do_command
 
 
-class Clip(object):
+class Clip:
     _registry = []
-    _tracks = []
+    _tracks = set()  # Use a set for faster lookups
 
     def __init__(self, raw_clip):
-        self.start = round(raw_clip['start'], 5)
+        self.start = max(round(raw_clip['start'], 5), 0.0)
         self.end = round(raw_clip['end'], 5)
-        if self.start <= 0.0:
-            self.start = 0.0
         self.duration = round(self.end - self.start, 5)
-        self.end = round(self.start + self.duration, 5)
+        self.end = round(self.start + self.duration, 5)  # Is this necessary?
         self.track = raw_clip['track']
         self.color = raw_clip['color']
 
+    def copy(self):
+        """
+        Create a shallow copy of the Clip instance.
+        """
+        copied_clip_data = {
+            'start': self.start,
+            'end': self.end,
+            'duration': self.duration,
+            'track': self.track,
+            'color': self.color
+        }
+        return Clip(copied_clip_data)
+
     @classmethod
     def to_json(cls):
-        json_list = [clip.__str__() for clip in cls._registry]
-        return json_list
+        return [json.dumps(clip.__dict__) for clip in cls._registry]
 
     @classmethod
-    def to_objects(self):
-        return self._registry
-
-    def __str__(self):
-        return json.dumps({
-            "start": self.start,
-            "end": self.end,
-            "duration": self.duration,
-            "track": self.track,
-            "color": self.color
-        })
+    def to_objects(cls):
+        return cls._registry
 
     @classmethod
     def get_num_tracks(cls):
         return len(cls._tracks)
 
-    @staticmethod
-    def get_clips() -> [object]:
-        """
-        Gets current clips in the project
-        Returns: list of clips objects
-        """
+    @classmethod
+    def get_clips(cls):
         clips_raw = do_command('GetInfo: Type=Clips')
-
-        # Last line is the result of the command
-        clips_raw_result = clips_raw.split("\n")[:-1]
-
-        # TODO: Use ENUMs instead of hardcoded text
         success_message = "BatchCommand finished: OK"
+        if success_message not in clips_raw:
+            return []
 
-        if success_message in clips_raw_result:
-            clips_only = clips_raw.replace(success_message, "")
-            clips_clean = clips_only.replace("\n", "").replace(" ", "").strip()
-            clips_ready = clips_clean[clips_clean.find(
-                "["):clips_clean.find("]")+1]
-            logger.debug(f"clips_ready: {clips_ready}")
-            clips_obj = json.loads(clips_ready)
+        # Extracting clips data
+        clips_json = clips_raw.split(success_message)[0].strip()
+        clips_data = json.loads(clips_json)
 
-            # Sorting the data by track and then by start time to ensure correct ordering
-            clips_sorted = sorted(
-                clips_obj, key=lambda x: (x['track'], x['start']))
-            clips_final = []
-            for raw_clip in clips_sorted:
-                if raw_clip['start'] >= 0.0 and raw_clip['end'] > 0.0:
-                    raw_clip['_id'] = "" + \
-                        str(raw_clip['track']) + \
-                        str(round(raw_clip['start'], 5))
-                    clips_final.append(Clip(raw_clip))
-                    if raw_clip['track'] not in Clip._tracks:
-                        Clip._tracks.append(raw_clip['track'])
-            Clip._registry = clips_final
-            return clips_final
-        return clips_raw_result
+        # Sorting and filtering clips
+        valid_clips = [c for c in clips_data if c['start']
+                       >= 0.0 and c['end'] > 0.0]
+        sorted_clips = sorted(
+            valid_clips, key=lambda x: (x['track'], x['start']))
+
+        # Creating Clip objects and updating class attributes
+        cls._registry = [Clip(clip) for clip in sorted_clips]
+        cls._tracks.update(clip.track for clip in cls._registry)
+        return cls._registry
+
+    def __str__(self):
+        return json.dumps(self.__dict__)
