@@ -27,11 +27,11 @@ def get_response(FROMFILE, sleep_seconds=0.05):
     """Return the command response."""
     time.sleep(sleep_seconds)
     result = ''
-    line = FROMFILE.readline()
+    line = ''
     while True:
         result += line
         line = FROMFILE.readline()
-        if line == '\n':
+        if line == '\n' and len(result) > 0:
             break
     logger.debug(f"Result: {result}")
     return result
