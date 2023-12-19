@@ -166,7 +166,7 @@ venv-run: ## Run main app script
 	@python main.py
 
 venv-test-unittests: ## Run unit tests
-	python -m unittest discover -s tests -p 'test_*.py'
+	python -m unittest discover -s tests -p 'test_*.py' --verbose
 
 venv-test: venv-test-unittests
 
