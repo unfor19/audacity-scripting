@@ -3,6 +3,9 @@ package audacity_pipe
 import (
 	"audacity_pipe/core"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {}
@@ -20,5 +23,11 @@ func TestReturn() string {
 }
 
 func Api(command string) string {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		os.Exit(1)
+	}()
 	return core.Api(command)
 }

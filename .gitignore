@@ -20,7 +20,7 @@ bin/
 pkg/
 out/
 *.so
-
+**/audacity_scripting/**/libs/
 
 # Tests output
 *aup3-wal

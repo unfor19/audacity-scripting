@@ -230,7 +230,9 @@ libs-audacity-pipe-mod:
 
 libs-audacity-pipe-gopy:
 	cd ${AUDACITY_PIPE_PATH} && \
-	gopy build -output=out -name=audacity_pipe audacity_pipe
+	gopy build -output=out -name=audacity_pipe audacity_pipe && \
+	rm -rf ${ROOT_DIR}/src/audacity_scripting/bridge/libs && \
+	cp -r out ${ROOT_DIR}/src/audacity_scripting/bridge/libs
 
 libs-audacity-pipe-run:
 	cd ${AUDACITY_PIPE_PATH} && \

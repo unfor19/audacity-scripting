@@ -2,6 +2,7 @@ import time
 import sys
 import os
 from wrapt_timeout_decorator import timeout
+from .libs.audacity_pipe import Api as PipeApi
 
 from ..utils.logger import logger
 
@@ -96,7 +97,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
             win32file.CloseHandle(pipe_send)
 
 
-def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
+def __do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
     while retry_count < retry_max_count:
         try:
             return do_command_(CMD)
@@ -106,6 +107,10 @@ def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
             time.sleep(sleep_seconds)
         finally:
             retry_count += 1
+
+
+def do_command(command):
+    return PipeApi(command)
 
 
 if __name__ == '__main__':
