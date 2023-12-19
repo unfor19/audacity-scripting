@@ -53,6 +53,7 @@ endif
 endif
 
 GOPATH:=${ROOT_DIR}/libs/go
+PATH:=${GOPATH}/bin:${PATH}
 AUDACITY_PIPE_PATH:=${GOPATH}/src/audacity_pipe
 
 # Removes blank rows - fgrep -v fgrep
@@ -223,7 +224,15 @@ wrapper-run-test: wrapper-prepare-test
 # --- Libs --- START ------------------------------------------------------------
 ##
 ###Libs
-libs-run:
+libs-audacity-pipe-mod:
+	cd ${AUDACITY_PIPE_PATH} && \
+	go mod verify
+
+libs-audacity-pipe-gopy:
+	cd ${AUDACITY_PIPE_PATH} && \
+	gopy build -output=out -name=audacity_pipe audacity_pipe
+
+libs-audacity-pipe-run:
 	cd ${AUDACITY_PIPE_PATH} && \
 	go run main.go
 ##--- Libs --- END --------------------------------------------------------------

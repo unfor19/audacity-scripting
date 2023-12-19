@@ -17,6 +17,7 @@ nh3==0.2.15
 Pillow==8.0.1
 pkginfo==1.9.6
 psutil==5.9.7
+PyBindGen==0.22.1
 Pygments==2.17.2
 readme-renderer==42.0
 requests==2.31.0

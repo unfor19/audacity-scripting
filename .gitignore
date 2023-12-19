@@ -18,6 +18,8 @@ version
 # go
 bin/
 pkg/
+out/
+*.so
 
 
 # Tests output
