@@ -22,7 +22,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     TOFILE.flush()
 
 
-def get_response(FROMFILE, sleep_seconds=0.01):
+def get_response(FROMFILE, sleep_seconds=0.05):
     """Return the command response."""
     time.sleep(sleep_seconds)
     result = ''
@@ -67,7 +67,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
         time.sleep(sleep_seconds)
         # Open file buffer in write according to the platform
         logger.debug(f"Accessing send pipe - '{pipe_name_send}' ...")
-        with open(pipe_name_send, 'w') as fp:
+        with open(pipe_name_send, 'w', encoding='utf-8') as fp:
             time.sleep(sleep_seconds)
             logger.debug("Accessed send pipe")
             # Send command to Audacity using the write pipe
