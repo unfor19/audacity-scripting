@@ -20,6 +20,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
     TOFILE.flush()
+    time.sleep(sleep_seconds)
 
 
 def get_response(FROMFILE, sleep_seconds=0.05):
