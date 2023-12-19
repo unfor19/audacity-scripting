@@ -49,10 +49,11 @@ endif
 ifeq (${_OS},windows)
 SHELL:=${VENV_BIN_ACTIVATE} && ${SHELL}
 endif
-
-
 endif
 endif
+
+GOPATH:=${ROOT_DIR}/libs/go
+AUDACITY_PIPE_PATH:=${GOPATH}/src/audacity_pipe
 
 # Removes blank rows - fgrep -v fgrep
 # Replace ":" with "" (nothing)
@@ -217,3 +218,12 @@ wrapper-run-test: wrapper-prepare-test
 	sleep 6
 	$(MAKE) venv-test
 # --- Wrapper --- END --------------------------------------------------------------
+
+
+# --- Libs --- START ------------------------------------------------------------
+##
+###Libs
+libs-run:
+	cd ${AUDACITY_PIPE_PATH} && \
+	go run main.go
+##--- Libs --- END --------------------------------------------------------------
