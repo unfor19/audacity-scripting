@@ -23,6 +23,8 @@ def open_project_copy(file_path, file_extra_label="", sleep_seconds=0.5):
 
 
 def calculate_clips_gaps(clips_info):
+    logger.info("Started calculating gaps between clips ...")
+
     if not clips_info:
         clips_info = Clip.get_clips()
     gaps = {}
@@ -40,6 +42,8 @@ def calculate_clips_gaps(clips_info):
                 "end": next_clip.start
             }
             gaps[current_clip.track].append(gap)
+    logger.info("Finished calculating gaps between clips")
+    logger.info(f"Gaps - {gaps}")
     return gaps
 
 
