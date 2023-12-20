@@ -99,6 +99,7 @@ def move_track(track_index, new_track_index):
 
 def calculate_new_positions(clips_objects: [Clip]) -> [object]:
     # Organize clips by track
+    logger.info("Calculating new positions for clips ...")
     tracks = {}
     clips_old_positions = deepcopy(clips_objects)
     for clip in clips_old_positions:
@@ -120,10 +121,12 @@ def calculate_new_positions(clips_objects: [Clip]) -> [object]:
             clip.end = round(current_start_time + clip.duration, 5)
             current_start_time = clip.end
             clips_new_positions.append(clip)
+    logger.info("Finished calculating new positions for clips")
     return clips_new_positions
 
 
 def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
+    logger.info("Started removing spaces between clips ...")
     Clip.get_clips()  # Fetch clips for the first time
     all_tracks_gaps = deepcopy(calculate_clips_gaps(Clip.to_objects())).items()
     clips_objects = Clip.to_objects()
@@ -139,6 +142,8 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
             track_clips = [
                 clip for clip in clips_objects if clip.track == track_index]
             target_track_index = track_index + num_of_tracks
+            logger.info(
+                f"Moving clips from track {track_index} to {target_track_index} ...")
             for track_clip_index, track_clip in enumerate(track_clips):
                 new_clip_position = current_track_new_positions[track_clip_index]
                 select_clip(
@@ -154,13 +159,16 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
                 )
                 paste_clip()
             sleep(sleep_seconds)
-
+        logger.info(f"Removing old tracks ...")
         # Delete the old tracks
         for _ in range(num_of_tracks):
             select_track(0)  # Always select the first track
             remove_tracks()   # Remove the selected track
             sleep(sleep_seconds)  # Give some time for the command to complete
+        logger.info(f"Saving project ...")
         if new_file_path:
             save_project_as(new_file_path)
         sleep(sleep_seconds)
+        logger.info("Finished removing spaces between clips, file saved to:")
+        print(new_file_path)
     return True
