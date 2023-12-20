@@ -104,7 +104,7 @@ audacity-download: .audacity-download audacity-verify-checksum ## Download Audac
 
 audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
-	${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /LOG=${ROOT_DIR}/audacity-installer.log
+	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP-"
 	@cat ${ROOT_DIR}/audacity-installer.log
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
