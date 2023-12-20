@@ -104,7 +104,7 @@ audacity-download: .audacity-download audacity-verify-checksum ## Download Audac
 
 audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
-	@${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /NORESTART
+	@${AUDACITY_DOWNLOAD_PATH} /VERYSILENT
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
