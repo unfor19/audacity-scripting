@@ -8,6 +8,9 @@ UNAME := $(shell uname)
 ROOT_DIR:=${CURDIR}
 BASH_PATH:=$(shell which bash)
 
+AUDACITY_VERSION:=3.4.2
+
+
 VENV_DIR_PATH:=${ROOT_DIR}/.VENV
 REQUIREMENTS_FILE_PATH:=${ROOT_DIR}/requirements.txt
 AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
@@ -20,6 +23,9 @@ VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_PREFERENCES_PATH:=${APPDATA}/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
+AUDACITY_DOWNLOAD_PATH:=${ROOT_DIR}/audacity-installer.exe
+AUDACITY_CHECKSUM:=D7BD5AE775DB9E42DA6058DA4A65A8F898A46CE467D9F21585084566213C36BF
+AUDACITY_DOWNLOAD_URL:=https://github.com/audacity/audacity/releases/download/Audacity-${AUDACITY_VERSION}/audacity-win-${AUDACITY_VERSION}-64bit.exe
 
 # TODO: Set it - currently getting it from GitHub Actions on Windows
 ifeq (${CI},true)
@@ -72,7 +78,7 @@ validate-%:
 		exit 1 ; \
 	fi
 
-print-vars:
+print-vars: ## Print env vars
 	@echo "AUDACITY_SRC_CONFIG_PATH=${AUDACITY_SRC_CONFIG_PATH}"
 	@echo "AUDACITY_BIN_PATH=${AUDACITY_BIN_PATH}"
 	@echo "VENV_BIN_ACTIVATE=${VENV_BIN_ACTIVATE}"
@@ -84,7 +90,23 @@ print-vars:
 ##
 ##AUDACITY
 ##--------
-audacity-update-config:
+audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHECKSUM ## Verify Audacity checksum
+	@echo "Verifying checksum for ${AUDACITY_DOWNLOAD_PATH} ..."
+	@echo "Expected checksum: ${AUDACITY_CHECKSUM}"
+	@python ${ROOT_DIR}/scripts/verify_checksum.py ${AUDACITY_DOWNLOAD_PATH} ${AUDACITY_CHECKSUM} sha256
+
+
+.audacity-download: validate-AUDACITY_DOWNLOAD_URL validate-AUDACITY_DOWNLOAD_PATH # A helper function to download Audacity
+	@echo "Downloading Audacity ..."
+	@curl -s -L ${AUDACITY_DOWNLOAD_URL} -o ${AUDACITY_DOWNLOAD_PATH}
+
+audacity-download: .audacity-download audacity-verify-checksum ## Download Audacity
+
+audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
+	@echo "Installing Audacity ..."
+	@${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /NORESTART
+
+audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
 		echo "Updating ${AUDACITY_PREFERENCES_PATH} file" ; \
 		sed -i.bak 's/mod-script-pipe=4/mod-script-pipe=1/' "${AUDACITY_PREFERENCES_PATH}" ; \
@@ -96,7 +118,7 @@ audacity-update-config:
 		exit 1 ; \
 	fi
 
-audacity-print-config:
+audacity-print-config: validate-AUDACITY_PREFERENCES_PATH ## Print Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
 		cat "${AUDACITY_PREFERENCES_PATH}" ; \
 	else \
@@ -104,7 +126,7 @@ audacity-print-config:
 		exit 1 ; \
 	fi
 
-audacity-start: ## Start Audacity GUI app
+audacity-start: validate-AUDACITY_BIN_PATH ## Start Audacity GUI app
 	@echo Starting Audacity ...
 	@${AUDACITY_BIN_PATH} &
 	@if [[ "${_CI}" = "true" ]]; then \
@@ -113,18 +135,18 @@ audacity-start: ## Start Audacity GUI app
 		echo "Hopefully Audacity is up" ; \
 	fi
 
-audacity-test-pipe:
+audacity-test-pipe: ## Test Audacity pipe
 	@if [[ "${_OS}" = "windows" ]]; then \
 		pipelist ; \
 		pipelist | grep SrvPipe ; \
 	fi
 	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
-audacity-kill:
+audacity-kill: valida-teAUDACITY_KILL_COMMAND ## Kill Audacity
 	${AUDACITY_KILL_COMMAND}
 
 audacity-restart: audacity-kill audacity-start
-	
+
 # --- Audacity --- END --------------------------------------------------------------
 
 

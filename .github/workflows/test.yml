@@ -31,8 +31,10 @@ jobs:
         run: make venv-install-edit
       - name: Install Tests Requirements
         run: |
+          # choco install -y audacity --version 3.4.2
+          make audacity-download && \
+          make audacity-install && \
           choco install -y pipelist
-          choco install -y audacity --version 3.4.2
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity
