@@ -109,8 +109,8 @@ pipelist-download: .pipelist-download pipelist-verify-checksum ## Download pipel
 pipelist-install: validate-PIPELIST_DOWNLOAD_PATH ## Install pipelist
 	@echo "Installing pipelist ..."
 	unzip -o ${PIPELIST_DOWNLOAD_PATH} -d ${PIPELIST_EXTRACTED_DIR_PATH} && \
-		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist.exe && \
-		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist64.exe
+		cp ${PIPELIST_EXTRACTED_FILE_PATH} c:/Windows/System32/pipelist.exe && \
+		cp ${PIPELIST_EXTRACTED_FILE_PATH} c:/Windows/System32/pipelist64.exe
 
 audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHECKSUM ## Verify Audacity checksum
 	@echo "Verifying checksum for ${AUDACITY_DOWNLOAD_PATH} ..."
