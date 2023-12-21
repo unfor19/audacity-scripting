@@ -117,21 +117,17 @@ audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHEC
 	@echo "Expected checksum: ${AUDACITY_CHECKSUM}"
 	@python ${ROOT_DIR}/scripts/verify_checksum.py ${AUDACITY_DOWNLOAD_PATH} ${AUDACITY_CHECKSUM} sha256
 
-
 .audacity-download: validate-AUDACITY_DOWNLOAD_URL validate-AUDACITY_DOWNLOAD_PATH # A helper function to download Audacity
 	@echo "Downloading Audacity ..."
 	@curl -s -L ${AUDACITY_DOWNLOAD_URL} -o ${AUDACITY_DOWNLOAD_PATH}
 
 audacity-download: .audacity-download audacity-verify-checksum ## Download Audacity
 
-meir:
-	@until which audacity ; do echo "Sleeping ..." && sleep 1 ; done
-
 audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
 	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
 	@echo "Waiting for Audacity to complete installation ..."
-	@until [[ $(shell which audacity) ]] ; do echo "Sleeping ..." && sleep 1 ; done
+	@until which audacity ; do echo "Sleeping ..." && sleep 1 ; done
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
