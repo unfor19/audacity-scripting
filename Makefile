@@ -175,7 +175,7 @@ audacity-restart: audacity-kill audacity-start
 ##----
 venv-prepare: ## Create a Python virtual environment with venv
 	python -m venv ${VENV_DIR_PATH} && \
-	python -m pip install -U setuptools pip wheel twine==3.1.1 && \
+	python -m pip install -U pip wheel && \
 	ls ${VENV_DIR_PATH}
 
 venv-install: ## Install Python packages
@@ -187,7 +187,7 @@ venv-install: ## Install Python packages
 		pip install -r "${REQUIREMENTS_FILE_PATH}" ${PACKAGE_NAME} ; \
 	elif [[ -n "${PACKAGE_NAME}" ]]; then \
 		echo "Installing package ${PACKAGE_NAME}" ; \
-		pip install ${PACKAGE_NAME} ; \
+		pip install -U ${PACKAGE_NAME} ; \
 	else \
 		echo "ERROR: No requirements.txt file found and no package name provided" ; \
 		exit 1 ; \
@@ -218,7 +218,7 @@ venv-test-clean:
 	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
 
 .venv-build: 
-	python setup.py sdist bdist_wheel
+	python -m build .
 
 .venv-publish: 
 	twine upload dist/*

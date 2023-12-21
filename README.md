@@ -131,11 +131,10 @@ From now on, we'll use `make` commands to develop and build this Python package 
    source https://github.com/unfor19/audacity-scripting.git (push)
    ```
 
-4. Prepare `.VENV` directory - This step also installs the latest version of `setuptools`, `pip` `wheel`, and a specific version for `twine==3.1.1`\*.
+4. Prepare `.VENV` directory - This step also installs the latest version of `pip` and `wheel`
    ```bash
    make venv-prepare
    ```
-   **\*** Using the latest twine version fails in CI/CD, so using `3.1.1` for now
 5. **IMPORTANT**: The [Makefile](./Makefile) activates `.VENV` for any `venv-` target.
 6. Install this package's development `requirements.txt` in `.VENV`
    ```bash
