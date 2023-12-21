@@ -34,9 +34,6 @@ jobs:
         run: |
           make audacity-download && \
           make audacity-install && \
-          make pipelist-download && \
-          make pipelist-install
-          # choco install -y pipelist
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity

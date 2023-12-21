@@ -159,10 +159,6 @@ audacity-start: validate-AUDACITY_BIN_PATH ## Start Audacity GUI app
 	fi
 
 audacity-test-pipe: ## Test Audacity pipe
-	@if [[ "${_OS}" = "windows" ]]; then \
-		pipelist ; \
-		pipelist | grep SrvPipe ; \
-	fi
 	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
 audacity-kill: validate-AUDACITY_KILL_COMMAND ## Kill Audacity
