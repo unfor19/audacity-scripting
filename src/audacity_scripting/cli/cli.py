@@ -64,7 +64,7 @@ def clean_spaces(file_path):
     """
     new_file_path = open_project_copy(file_path)
     logger.debug(new_file_path)
-    result = remove_spaces_between_clips(new_file_path)
+    result = remove_spaces_between_clips()
     if result:
         print(new_file_path)
     else:

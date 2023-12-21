@@ -98,7 +98,8 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
 
 
 def do_command(CMD, retry_count=0, retry_max_count=50, sleep_seconds=0.05):
-    while retry_count < retry_max_count:
+    while retry_count <= retry_max_count:
+        retry_count += 1
         try:
             return do_command_(CMD)
         except OSError as e:
@@ -106,10 +107,11 @@ def do_command(CMD, retry_count=0, retry_max_count=50, sleep_seconds=0.05):
             time.sleep(1)  # Hardcoded 1 second
         except Exception as e:
             logger.error(
-                f"Error while executing command. Retrying {retry_count}/{retry_max_count}...\n{e}")
+                f"Error while executing command. Retrying {retry_count}/{retry_max_count} - {e}")
             time.sleep(sleep_seconds)
         finally:
-            retry_count += 1
+            if retry_count > retry_max_count:
+                raise Exception(f"Failed to execute command: {CMD}")
 
 
 if __name__ == '__main__':
