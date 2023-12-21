@@ -68,7 +68,6 @@ def clean_spaces(file_path):
     if result:
         print(new_file_path)
     else:
-        logger.error("Failed to remove spaces between clips")
         raise Exception(result)
 
 

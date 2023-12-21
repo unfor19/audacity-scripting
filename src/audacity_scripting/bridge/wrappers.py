@@ -169,7 +169,15 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
             select_track(0)  # Always select the first track
             remove_tracks()   # Remove the selected track
             sleep(sleep_seconds)  # Give some time for the command to complete
-        logger.info("Finished removing spaces between clips")
+
+        all_tracks_gaps_after = deepcopy(
+            calculate_clips_gaps(Clip.to_objects())).items()
+        if all_tracks_gaps_after:
+            logger.error("Failed to clean all gaps between clips")
+            return all_tracks_gaps_after
+        else:
+            logger.info("Finished removing spaces between clips")
+
         if new_file_path:
             logger.info(f"Saving project ...")
             save_project_as(new_file_path)
