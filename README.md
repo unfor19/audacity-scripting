@@ -4,6 +4,10 @@
 
 A Python package for automating Audacity tasks based on [Audacity's Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
 
+https://github.com/unfor19/audacity-scripting/assets/15122452/080e772c-3e40-424b-87ce-c2ac0dd75570
+
+> Music by Sergio Prosvirini from Pixabay
+
 ## Requirements
 
 - Install [Python 3.9+](https://www.python.org/downloads/)
