@@ -128,6 +128,11 @@ audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
 	@echo "Waiting for Audacity to complete installation ..."
 	@until ls ${AUDACITY_BIN_PATH} ; do echo "Sleeping ..." && sleep 1 ; done
+	@if [[  "${CI}" = "true" ]]; then \
+		echo "Sleeping 10 seconds to allow Audacity to finish the installation ..." ; \
+		sleep 10 ; \
+		echo "Hopefully Audacity is up" ; \
+	fi
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
@@ -175,7 +180,7 @@ audacity-restart: audacity-kill audacity-start
 ##----
 venv-prepare: ## Create a Python virtual environment with venv
 	python -m venv ${VENV_DIR_PATH} && \
-	python -m pip install -U setuptools pip wheel twine==3.1.1 && \
+	python -m pip install -U pip wheel && \
 	ls ${VENV_DIR_PATH}
 
 venv-install: ## Install Python packages
@@ -187,7 +192,7 @@ venv-install: ## Install Python packages
 		pip install -r "${REQUIREMENTS_FILE_PATH}" ${PACKAGE_NAME} ; \
 	elif [[ -n "${PACKAGE_NAME}" ]]; then \
 		echo "Installing package ${PACKAGE_NAME}" ; \
-		pip install ${PACKAGE_NAME} ; \
+		pip install -U ${PACKAGE_NAME} ; \
 	else \
 		echo "ERROR: No requirements.txt file found and no package name provided" ; \
 		exit 1 ; \
@@ -218,7 +223,7 @@ venv-test-clean:
 	rm -f ${ROOT_DIR}/tests/data/input/*.output.*
 
 .venv-build: 
-	python setup.py sdist bdist_wheel
+	python -m build .
 
 .venv-publish: 
 	twine upload dist/*
