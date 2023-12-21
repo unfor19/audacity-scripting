@@ -105,9 +105,9 @@ audacity-download: .audacity-download audacity-verify-checksum ## Download Audac
 audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
 	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
-	@echo "Sleeping 10 seconds to allow Audacity to install ..."
-	@sleep 10
-	@cat ${ROOT_DIR}/audacity-installer.log
+	# @echo "Sleeping 10 seconds to allow Audacity to install ..."
+	# @sleep 10
+	# @cat ${ROOT_DIR}/audacity-installer.log
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \
@@ -145,7 +145,7 @@ audacity-test-pipe: ## Test Audacity pipe
 	fi
 	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
-audacity-kill: valida-teAUDACITY_KILL_COMMAND ## Kill Audacity
+audacity-kill: validate-AUDACITY_KILL_COMMAND ## Kill Audacity
 	${AUDACITY_KILL_COMMAND}
 
 audacity-restart: audacity-kill audacity-start
