@@ -26,6 +26,11 @@ AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
 AUDACITY_DOWNLOAD_PATH:=${ROOT_DIR}/audacity-installer.exe
 AUDACITY_CHECKSUM:=D7BD5AE775DB9E42DA6058DA4A65A8F898A46CE467D9F21585084566213C36BF
 AUDACITY_DOWNLOAD_URL:=https://github.com/audacity/audacity/releases/download/Audacity-${AUDACITY_VERSION}/audacity-win-${AUDACITY_VERSION}-64bit.exe
+PIPELIST_DOWNLOAD_PATH:=${ROOT_DIR}/pipelist.zip
+PIPELIST_CHECKSUM:=7BFEF3046BFCCE3EFA666C4AE235B3A903DDC8DDBA830A5C3EE4178E0A712B8D
+PIPELIST_DOWNLOAD_URL:=https://download.sysinternals.com/files/PipeList.zip
+PIPELIST_EXTRACTED_DIR_PATH:=${ROOT_DIR}/.pipelist
+PIPELIST_EXTRACTED_FILE_PATH:=${PIPELIST_EXTRACTED_DIR_PATH}/pipelist64.exe
 
 # TODO: Set it - currently getting it from GitHub Actions on Windows
 ifeq (${CI},true)
@@ -90,6 +95,23 @@ print-vars: ## Print env vars
 ##
 ##AUDACITY
 ##--------
+pipelist-verify-checksum: validate-PIPELIST_DOWNLOAD_PATH validate-PIPELIST_CHECKSUM ## Verify pipelist checksum
+	@echo "Verifying checksum for ${PIPELIST_DOWNLOAD_PATH} ..."
+	@echo "Expected checksum: ${PIPELIST_CHECKSUM}"
+	@python ${ROOT_DIR}/scripts/verify_checksum.py ${PIPELIST_DOWNLOAD_PATH} ${PIPELIST_CHECKSUM} sha256
+
+.pipelist-download: validate-PIPELIST_DOWNLOAD_PATH validate-PIPELIST_DOWNLOAD_URL # A helper function to download pipelist
+	@echo "Downloading pipelist ..."
+	@curl -s -L ${PIPELIST_DOWNLOAD_URL} -o ${PIPELIST_DOWNLOAD_PATH}
+
+pipelist-download: .pipelist-download pipelist-verify-checksum ## Download pipelist
+
+pipelist-install: validate-PIPELIST_DOWNLOAD_PATH ## Install pipelist
+	@echo "Installing pipelist ..."
+	unzip -o ${PIPELIST_DOWNLOAD_PATH} -d ${PIPELIST_EXTRACTED_PATH} && \
+		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist.exe && \
+		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist64.exe
+
 audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHECKSUM ## Verify Audacity checksum
 	@echo "Verifying checksum for ${AUDACITY_DOWNLOAD_PATH} ..."
 	@echo "Expected checksum: ${AUDACITY_CHECKSUM}"
@@ -105,9 +127,6 @@ audacity-download: .audacity-download audacity-verify-checksum ## Download Audac
 audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
 	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
-	# @echo "Sleeping 10 seconds to allow Audacity to install ..."
-	# @sleep 10
-	# @cat ${ROOT_DIR}/audacity-installer.log
 
 audacity-update-config: validate-AUDACITY_PREFERENCES_PATH ## Update Audacity config
 	@if [[ -f "${AUDACITY_PREFERENCES_PATH}" ]]; then \

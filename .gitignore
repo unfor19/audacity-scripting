@@ -6,6 +6,7 @@
 
 # windows
 *.exe
+*.zip
 
 # python
 *__pycache__
