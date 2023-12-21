@@ -88,9 +88,10 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
             logger.debug(f"Response:\n{response}")
             return response
     except OSError as e:
-        raise Exception(f"Waiting for pipe to be ready ...")
+        logger.warning(f"Waiting for pipe to be ready ...")
+        time.sleep(1)  # Hardcoded 1 second
     except Exception as e:
-        raise Exception(f"Exception: {e}")
+        raise Exception(f"Unhandled Exception: {e}")
     finally:
         if sys.platform == 'win32':
             win32file.CloseHandle(pipe_send)
