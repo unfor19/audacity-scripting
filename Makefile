@@ -108,7 +108,7 @@ pipelist-download: .pipelist-download pipelist-verify-checksum ## Download pipel
 
 pipelist-install: validate-PIPELIST_DOWNLOAD_PATH ## Install pipelist
 	@echo "Installing pipelist ..."
-	unzip -o ${PIPELIST_DOWNLOAD_PATH} -d ${PIPELIST_EXTRACTED_PATH} && \
+	unzip -o ${PIPELIST_DOWNLOAD_PATH} -d ${PIPELIST_EXTRACTED_DIR_PATH} && \
 		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist.exe && \
 		cp ${PIPELIST_EXTRACTED_PATH} c:/Windows/System32/pipelist64.exe
 
