@@ -133,6 +133,7 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
     logger.info("Started removing spaces between clips ...")
     Clip.get_clips()  # Fetch clips for the first time
     all_tracks_gaps = deepcopy(calculate_clips_gaps(Clip.to_objects())).items()
+    tracks_with_gaps = [track for track, gaps in all_tracks_gaps]
     clips_objects = Clip.to_objects()
     clips_new_positions = calculate_new_positions(clips_objects)
     num_of_tracks = Clip.get_num_tracks()
@@ -163,12 +164,15 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
                 )
                 paste_clip()
             sleep(sleep_seconds)
-        logger.info(f"Removing old tracks ...")
-        # Delete the old tracks
-        for _ in range(num_of_tracks):
-            select_track(0)  # Always select the first track
-            remove_tracks()   # Remove the selected track
-            sleep(sleep_seconds)  # Give some time for the command to complete
+        logger.info(
+            f"Removing tracks that contained gaps - {tracks_with_gaps}")
+        # Delete tracks that contained gaps
+        for track_index in all_tracks_gaps:
+            logger.info(f"Removing track {track_index} with gaps ...")
+            select_track(track_index)  # Select the track with gaps
+            remove_tracks()  # Remove the selected track
+            # Give some time for the command to complete
+            sleep(sleep_seconds)
 
         # Verify that all gaps between clips were removed
         Clip.get_clips()  # Fetch clips after cleanup
