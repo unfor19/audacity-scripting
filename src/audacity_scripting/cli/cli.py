@@ -68,7 +68,7 @@ def clean_spaces(file_path):
     if result:
         print(new_file_path)
     else:
-        raise Exception(result)
+        raise Exception("Failed to remove spaces between clips")
 
 
 @cli.command()

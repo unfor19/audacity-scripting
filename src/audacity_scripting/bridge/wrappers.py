@@ -170,11 +170,14 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
             remove_tracks()   # Remove the selected track
             sleep(sleep_seconds)  # Give some time for the command to complete
 
+        # Verify that all gaps between clips were removed
+        Clip.get_clips()  # Fetch clips after cleanup
         all_tracks_gaps_after = deepcopy(
             calculate_clips_gaps(Clip.to_objects())).items()
         if all_tracks_gaps_after:
-            logger.error("Failed to clean all gaps between clips")
-            return all_tracks_gaps_after
+            logger.error(
+                f"Failed to clean all gaps between clips - Gaps - {all_tracks_gaps_after}")
+            return False
         else:
             logger.info("Finished removing spaces between clips")
 
