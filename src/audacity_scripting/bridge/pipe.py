@@ -89,7 +89,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
             return response
     except OSError as e:
         logger.warning(f"Waiting for pipe to be ready ...")
-        time.sleep(1)  # Hardcoded 1 second
+        raise e
     except Exception as e:
         raise Exception(f"Unhandled Exception: {e}")
     finally:
@@ -97,10 +97,13 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
             win32file.CloseHandle(pipe_send)
 
 
-def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
+def do_command(CMD, retry_count=0, retry_max_count=50, sleep_seconds=0.05):
     while retry_count < retry_max_count:
         try:
             return do_command_(CMD)
+        except OSError as e:
+            logger.warning(f"Retrying {retry_count}/{retry_max_count}")
+            time.sleep(1)  # Hardcoded 1 second
         except Exception as e:
             logger.error(
                 f"Error while executing command. Retrying {retry_count}/{retry_max_count}...\n{e}")
