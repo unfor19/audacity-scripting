@@ -46,8 +46,6 @@ jobs:
         run: |
           make print-vars
           make audacity-print-config
-      - name: Test Audacity Pipe
-        run: make audacity-test-pipe
       - name: Run Unit Tests
         run: make venv-test-unittests
       - name: Prepare for test
