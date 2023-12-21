@@ -13,7 +13,7 @@ else:
     pass
 
 
-def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
+def send_command(TOFILE, EOL, command, sleep_seconds=0.001):
     """Send a single command."""
     time.sleep(sleep_seconds)
     full_command = command + EOL
@@ -26,7 +26,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
         time.sleep(sleep_seconds)
 
 
-def get_response(FROMFILE, sleep_seconds=0.01):
+def get_response(FROMFILE, sleep_seconds=0.005):
     """Return the command response."""
     time.sleep(sleep_seconds)
     result = ''
@@ -41,7 +41,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
 
 
 @timeout(7)  # Lucky Number Slevin (2006)
-def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
+def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
     time.sleep(sleep_seconds)
