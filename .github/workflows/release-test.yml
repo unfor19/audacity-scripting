@@ -61,7 +61,15 @@ jobs:
           TWINE_NON_INTERACTIVE: true
           TWINE_USERNAME: ${{ secrets.PYPI_USER_NAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: make publish
+        run: |
+          result=$(make publish || true)
+          is_file_name_exists_error=$(echo "$result" | grep "This filename has already been used, use a different version" 2>/dev/null || true)
+          if [ -n "$is_file_name_exists_error" ]; then
+            echo "File name already exists, all good!
+          else
+            echo "Unhandled exception:"
+            echo "$result"
+          fi
       - name: Create tag
         if: github.event_name == 'workflow_dispatch'
         uses: actions/github-script@v7.0.1
