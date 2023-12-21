@@ -79,7 +79,7 @@ audacity_scripting clean-spaces --path "/path/to/my_project.aup3"
 Send a command to Audacity according to [Audacity's Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
 
 ```bash
-audacity_scripting do-command --command "Select: Track=0 Track=1"
+audacity_scripting do-command --command "Select: Tracks=0.0 Start=0.0 End=0.0"
 ```
 
 ## Contributing
