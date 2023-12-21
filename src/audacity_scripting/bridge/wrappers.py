@@ -169,10 +169,12 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
             select_track(0)  # Always select the first track
             remove_tracks()   # Remove the selected track
             sleep(sleep_seconds)  # Give some time for the command to complete
+        logger.info("Finished removing spaces between clips, file saved to:")
         logger.info(f"Saving project ...")
         if new_file_path:
             save_project_as(new_file_path)
+        else:
+            save_project()
         sleep(sleep_seconds)
-        logger.info("Finished removing spaces between clips, file saved to:")
-        print(new_file_path)
+        logger.info("Finished saving project")
     return True

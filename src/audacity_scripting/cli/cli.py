@@ -64,8 +64,12 @@ def clean_spaces(file_path):
     """
     new_file_path = open_project_copy(file_path)
     logger.debug(new_file_path)
-    result = remove_spaces_between_clips()
-    logger.debug(result)
+    result = remove_spaces_between_clips(new_file_path)
+    if result:
+        print(new_file_path)
+    else:
+        logger.error("Failed to remove spaces between clips")
+        raise Exception(result)
 
 
 @cli.command()
