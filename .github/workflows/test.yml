@@ -15,6 +15,7 @@ env:
 
 jobs:
   tests:
+    timeout-minutes: 10
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4.1.1
@@ -31,8 +32,8 @@ jobs:
         run: make venv-install-edit
       - name: Install Tests Requirements
         run: |
-          choco install -y pipelist
-          choco install -y audacity --version 3.4.2
+          make audacity-download && \
+          make audacity-install
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity
@@ -47,9 +48,9 @@ jobs:
           make audacity-print-config
       - name: Test Audacity Pipe
         run: make audacity-test-pipe
-      - name: Test Audacity Pipe Again - Make sure pipe is up
-        run: make audacity-test-pipe
       - name: Run Unit Tests
         run: make venv-test-unittests
+      - name: Prepare for test
+        run: make wrapper-prepare-test
       - name: Run CLI Tests
         run: make venv-test-cli

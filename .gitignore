@@ -4,6 +4,10 @@
 *.wiki
 !.github
 
+# windows
+*.exe
+*.zip
+
 # python
 *__pycache__
 ENV/

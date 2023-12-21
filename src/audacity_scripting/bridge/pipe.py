@@ -13,7 +13,7 @@ else:
     pass
 
 
-def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
+def send_command(TOFILE, EOL, command, sleep_seconds=0.001):
     """Send a single command."""
     time.sleep(sleep_seconds)
     full_command = command + EOL
@@ -26,7 +26,7 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.01):
         time.sleep(sleep_seconds)
 
 
-def get_response(FROMFILE, sleep_seconds=0.01):
+def get_response(FROMFILE, sleep_seconds=0.005):
     """Return the command response."""
     time.sleep(sleep_seconds)
     result = ''
@@ -41,7 +41,7 @@ def get_response(FROMFILE, sleep_seconds=0.01):
 
 
 @timeout(7)  # Lucky Number Slevin (2006)
-def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
+def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
     # Initialize variables for Windows and macOS/Linux
     # Pipe names and EOL is set according to - https://manual.audacityteam.org/man/scripting.html
     time.sleep(sleep_seconds)
@@ -88,24 +88,30 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.03):
             logger.debug(f"Response:\n{response}")
             return response
     except OSError as e:
-        raise Exception(f"Waiting for pipe to be ready ...")
+        logger.warning(f"Waiting for pipe to be ready ...")
+        raise e
     except Exception as e:
-        raise Exception(f"Exception: {e}")
+        raise Exception(f"Unhandled Exception: {e}")
     finally:
         if sys.platform == 'win32':
             win32file.CloseHandle(pipe_send)
 
 
-def do_command(CMD, retry_count=0, retry_max_count=30, sleep_seconds=0.05):
-    while retry_count < retry_max_count:
+def do_command(CMD, retry_count=0, retry_max_count=50, sleep_seconds=0.05):
+    while retry_count <= retry_max_count:
+        retry_count += 1
         try:
             return do_command_(CMD)
+        except OSError as e:
+            logger.warning(f"Retrying {retry_count}/{retry_max_count}")
+            time.sleep(1)  # Hardcoded 1 second
         except Exception as e:
             logger.error(
-                f"Error while executing command. Retrying {retry_count}/{retry_max_count}...\n{e}")
+                f"Error while executing command. Retrying {retry_count}/{retry_max_count} - {e}")
             time.sleep(sleep_seconds)
         finally:
-            retry_count += 1
+            if retry_count > retry_max_count:
+                raise Exception(f"Failed to execute command: {CMD}")
 
 
 if __name__ == '__main__':

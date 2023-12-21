@@ -1,23 +1,25 @@
 # audacity-scripting
 
-A Python wrapper for the [Audacity Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
+[![PyPI](https://img.shields.io/pypi/v/audacity-scripting?label=PyPi)](https://pypi.org/project/audacity-scripting)
+
+A Python package for automating Audacity tasks based on [Audacity's Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
 
 ## Requirements
 
 - Install [Python 3.9+](https://www.python.org/downloads/)
-- Install [Audacity](https://www.audacityteam.org/download/)
+- Install [Audacity 3.4.2+](https://www.audacityteam.org/download/)
 - Audacity - Enable [mod-script-pipe](https://manual.audacityteam.org/man/scripting.html)
   - Run Audacity
   - Go into Edit > Preferences > Modules
   - Choose mod-script-pipe (which should show New) and change that to Enabled.
   - Restart Audacity
   - Check that it now does show Enabled.
-  - This establishes that Audacity is finding mod-script pipe, and that the version is compatible.
+  - This establishes that Audacity is finding mod-script pipe and that the version is compatible.
 
 ## Installation
 
 ```
-pip install audacity-scripting
+python -m pip install audacity-scripting
 ```
 
 ## Features
@@ -25,6 +27,7 @@ pip install audacity-scripting
 - [x] Remove spaces between clips - Removes spaces in all tracks for a given project absolute path `/path/to/my_project.aup3`
 - [ ] Clean silence
 - [ ] Normalize audio
+- [ ] Prepare videos for voice-clone-finetuning-vits
 
 ## Available Commands
 
@@ -53,7 +56,11 @@ Commands:
 
 All the commands assume that the _Audacity_ application is up and running; That is mandatory as we communicate with [_Audacity_'s pipe](https://manual.audacityteam.org/man/scripting.html) to execute all the commands.
 
+> **NOTE**: See the [GitHub Actions Tests Workflow](https://github.com/unfor19/audacity-scripting/actions/workflows/test.yml) to check it in action.
+
 ### Remove spaces between clips
+
+This command copies the original file and removes spaces (gaps) between audio clips from the copied file.
 
 ```bash
 audacity_scripting clean-spaces --path "/path/to/my_project.aup3"
@@ -61,16 +68,131 @@ audacity_scripting clean-spaces --path "/path/to/my_project.aup3"
 
 ### Send a command to Audacity
 
+Send a command to Audacity according to [Audacity's Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
+
 ```bash
 audacity_scripting do-command --command "Select: Track=0 Track=1"
 ```
 
+## Contributing
+
+This section assumes you've completed the [Requirements](#requirements) section.
+
+### Development Requirements
+
+- macOS
+
+  - Install [HomeBrew Package Manager](https://brew.sh/)
+    ```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    ```
+  - Install required packages with HomeBrew
+    ```bash
+    brew install make
+    ```
+
+- Windows
+
+  - Install [Chocolatey Package Manager](https://chocolatey.org/install)
+  - Install required packages with Choco
+
+    **IMPORTANT:** Open a PowerShell window with elevated permissions (As Administrator)
+
+    ```bash
+    choco install -y make
+    ```
+
+From now on, we'll use `make` commands to develop and build this Python package locally.
+
+1. [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repository on GitHub
+2. [Git clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) your forked repository
+3. Add this repository as a "source" remote
+
+   ```bash
+   cd audacity-scripting
+   ```
+
+   ```bash
+   git remote add source https://github.com/unfor19/audacity-scripting.git
+   ```
+
+   Check git remotes
+
+   ```bash
+   git remote -v
+   ```
+
+   Assuming you are `willywonka`, here's the desired output:
+
+   ```
+   origin https://github.com/willywonka/audacity-scripting.git (fetch)
+   origin https://github.com/willywonka/audacity-scripting.git (push)
+   source https://github.com/unfor19/audacity-scripting.git (fetch)
+   source https://github.com/unfor19/audacity-scripting.git (push)
+   ```
+
+4. Prepare `.VENV` directory - This step also installs the latest version of `setuptools`, `pip` `wheel`, and a specific version for `twine==3.1.1`\*.
+   ```bash
+   make venv-prepare
+   ```
+   **\*** Using the latest twine version fails in CI/CD, so using `3.1.1` for now
+5. **IMPORTANT**: The [Makefile](./Makefile) activates `.VENV` for any `venv-` target.
+6. Install this package's development `requirements.txt` in `.VENV`
+   ```bash
+   make venv-install
+   ```
+7. Install this package in [edit mode](https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#working-in-development-mode)
+
+   **IMPORTANT**: For any change in [./src/audacity_scripting/cli/](./src/audacity_scripting/cli/), it's best to re-run this command to update the CLI commands; see [Click Framework](https://click.palletsprojects.com/en/8.1.x/).
+
+   ```bash
+   make venv-install-edit
+   ```
+
+You can now start the development process!
+
+### Development Process
+
+1. Checkout to a new branch `feature/my-awesome-feature`
+1. (Optional) Add a new Python package and update [./requirements.txt](./requirements.txt) accordingly
+   ```bash
+   make venv-install PACKAGE_NAME=click==8.1.7
+   ```
+   ```bash
+   make venv-requirements-update
+   ```
+1. Add tests on your feature in [./tests](./tests); all tests are based on the [Python's unittest framework](https://docs.python.org/3/library/unittest.html)
+1. Run tests - This wrapper command kills existing Audacity instances, cleans up test outputs, starts Audacity, and then starts the tests.
+   ```bash
+   make wrapper-run-test
+   ```
+1. Commit changes to your cloned fork
+   ```bash
+   git commit -am "added an awesome feature"
+   ```
+1. Create a GitHub Pull Request from your fork to the source repository.
+
+#### Syncing with the "source" code
+
+You've already added `source` as a git remote, to sync from `source` to your current branch, execute this command:
+
+```bash
+git pull source main
+```
+
+Following that, you might need to handle some merge conflicts, but that's it; you're up-to-date with the latest version of the source code.
+
+## Known Issues
+
+- macOS prints Audacity's server logs (`Server sending`, `Read failed on fifo, quitting`, etc.) - documented in [JOURNEY.md](./JOURNEY.md)
+
 ## References
 
-- Audacity pipes - [https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/](https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/)
-- GitHub Actions Windows Pipes Discussion - [https://github.com/orgs/community/discussions/40540](https://github.com/orgs/community/discussions/40540)
-- Audacity pipes issue on Windows - [https://forum.audacityteam.org/t/different-errors-running-pipe-test/65305/40](https://forum.audacityteam.org/t/different-errors-running-pipe-test/65305/40)
-- Python and Windows named pipes on Stackoverflow - [https://stackoverflow.com/q/48542644](https://stackoverflow.com/questions/48542644/python-and-windows-named-pipes)
+- [GitHub Issue - Audacity Remove spaces between clips](https://github.com/audacity/audacity/issues/3924)
+- [SourceForge Issue - Audacity pipes](https://sourceforge.net/p/audacity/mailman/audacity-devel/thread/CAJhgUZ1DOvHMie7KHJ45EuDztw-8WJM8Qd0d%2BNfkQaEje%3D-7Lg%40mail.gmail.com/)
+- [GitHub Actions Windows Pipes Discussion](https://github.com/orgs/community/discussions/40540)
+- [Audacity pipes issue on Windows](https://forum.audacityteam.org/t/different-errors-running-pipe-test/65305/40)
+- [Python and Windows named pipes on Stackoverflow](https://stackoverflow.com/questions/48542644/python-and-windows-named-pipes)
 
 ## Authors
 
