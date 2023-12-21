@@ -15,6 +15,7 @@ env:
 
 jobs:
   tests:
+    name: Tests
     timeout-minutes: 10
     runs-on: windows-2022
     steps:
