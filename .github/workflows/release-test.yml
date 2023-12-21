@@ -65,7 +65,7 @@ jobs:
           result=$(make publish || true)
           is_file_name_exists_error=$(echo "$result" | grep "This filename has already been used, use a different version" 2>/dev/null || true)
           if [ -n "$is_file_name_exists_error" ]; then
-            echo "File name already exists, all good!
+            echo "File name already exists, all good!"
           else
             echo "Unhandled exception:"
             echo "$result"
