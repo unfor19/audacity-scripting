@@ -42,7 +42,7 @@ def calculate_clips_gaps(clips_info):
                 "end": next_clip.start
             }
             gaps[current_clip.track].append(gap)
-    logger.info("Finished calculating gaps between clips")
+    logger.info("Completed calculating gaps between clips")
     logger.info(f"Gaps - {gaps}")
     return gaps
 
@@ -125,7 +125,7 @@ def calculate_new_positions(clips_objects: [Clip]) -> [object]:
             clip.end = round(current_start_time + clip.duration, 5)
             current_start_time = clip.end
             clips_new_positions.append(clip)
-    logger.info("Finished calculating new positions for clips")
+    logger.info("Completed calculating new positions for clips")
     return clips_new_positions
 
 
@@ -179,11 +179,11 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
                 f"Failed to clean all gaps between clips - Gaps - {all_tracks_gaps_after}")
             return False
         else:
-            logger.info("Finished removing spaces between clips")
+            logger.info("Completed removing spaces between clips")
 
         if new_file_path:
             logger.info(f"Saving project ...")
             save_project_as(new_file_path)
             sleep(sleep_seconds)
-            logger.info("Finished saving project")
+            logger.info("Completed saving project")
     return True
