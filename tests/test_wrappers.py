@@ -11,22 +11,32 @@ test_file_path = Path.cwd().joinpath(test_file_relative_path)
 
 
 class WrappersTestCase(TestCase):
-    def test_1_remove_spaces_between_clips(self):
+
+    @staticmethod
+    def run_test_and_compare(file_extra_label, operation_func, *args, **kwargs):
         expected_file_path = Path.cwd().joinpath(
-            'tests/data/expected/1.expected.remove_spaces_between_clips.aup3')
+            f'tests/data/expected/1.expected{file_extra_label}.aup3')
         new_file_path = open_project_copy(
-            test_file_path, file_extra_label='.remove_spaces_between_clips')
-        result = remove_spaces_between_clips(new_file_path)
-        logger.info(f"test_1_remove_spaces_between_clips result: {result}")
+            test_file_path, file_extra_label=file_extra_label)
+
+        result = operation_func(new_file_path, *args, **kwargs)
+        logger.info(f"{file_extra_label} result: {result}")
+
         Clip.refresh_clips()
         new_clips_info_json = Clip.to_json()
         logger.info(f"new_clips_info: {new_clips_info_json}")
+
         open_project_copy(expected_file_path)
         Clip.refresh_clips()
         expected_clips_info = Clip.to_json()
         logger.info(f"expected_clips_info: {expected_clips_info}")
-        self.assertTrue(
-            result and new_clips_info_json == expected_clips_info)
+        return result and new_clips_info_json == expected_clips_info
+
+    def test_1_remove_spaces_between_clips(self):
+        self.assertTrue(self.run_test_and_compare(
+            '.remove_spaces_between_clips',
+            remove_spaces_between_clips
+        ))
 
     def test_2_good_raw_command(self):
         result = do_command("Select: Start=0.0 Track=0.0")
@@ -39,21 +49,11 @@ class WrappersTestCase(TestCase):
         self.assertTrue(AudacityCommandStatus.FAIL.value in result)
 
     def test_4_add_labels_to_clips(self):
-        expected_file_path = Path.cwd().joinpath(
-            'tests/data/expected/1.expected.add_labels_to_clips.aup3')
-        new_file_path = open_project_copy(
-            test_file_path, file_extra_label='.add_labels_to_clips')
-        result = add_labels_to_clips(new_file_path, start_label_iterator=40)
-        logger.info(f"test_4_add_labels_to_clips result: {result}")
-        Clip.refresh_clips()
-        new_clips_info_json = Clip.to_json()
-        logger.info(f"new_clips_info: {new_clips_info_json}")
-        open_project_copy(expected_file_path)
-        Clip.refresh_clips()
-        expected_clips_info = Clip.to_json()
-        logger.info(f"expected_clips_info: {expected_clips_info}")
-        self.assertTrue(
-            result and new_clips_info_json == expected_clips_info)
+        self.assertTrue(self.run_test_and_compare(
+            '.add_labels_to_clips',
+            add_labels_to_clips,
+            start_label_iterator=40
+        ))
 
     def test_5_remove_labels(self):
         pass

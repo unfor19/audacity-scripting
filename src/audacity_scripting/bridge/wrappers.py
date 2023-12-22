@@ -211,8 +211,8 @@ def add_labels_to_clips(new_file_path="", start_label_iterator=1, sleep_seconds=
     do_command(f'CursTrackStart:')
 
     # Delete old tracks
+    logger.info(f"Removing track old tracks ...")
     for track_index in original_tracks[::-1]:
-        logger.info(f"Removing track old tracks ...")
         select_track(track_index)
         remove_tracks()
         sleep(sleep_seconds)
