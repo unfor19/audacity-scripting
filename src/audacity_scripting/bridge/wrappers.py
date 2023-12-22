@@ -3,7 +3,7 @@ import pyperclip
 from ..utils.logger import logger
 from .pipe import do_command
 from .clip import Clip
-from .project import open_project, save_project, save_project_as
+from .project import open_project, save_project, save_project_as, save_project_changes
 from time import sleep
 import os
 import shutil
@@ -77,6 +77,33 @@ def move_track(track_index, new_track_index):
     return True
 
 
+def copy_and_paste_clip(source_track_index, target_track_index, clip):
+    select_clip(source_track_index, clip.start, clip.end)
+    copy_clip()
+    select_clip(target_track_index, clip.start, clip.end)
+    paste_clip()
+    return True
+
+
+def add_label_to_clip(label_iterator, sleep_seconds=0.01):
+    do_command('AddLabel:')
+    pyperclip.copy(label_iterator)
+    do_command('Paste:')
+    sleep(sleep_seconds)
+    return label_iterator + 1
+
+
+def clean_up_tracks(original_tracks, sleep_seconds=0.01):
+    logger.info("Removing original tracks ...")
+    for track_index in original_tracks[::-1]:
+        logger.info(f"Removing track {track_index} ...")
+        select_track(track_index)
+        remove_tracks()
+        sleep(sleep_seconds)
+    logger.info("Completed removing tracks")
+    return True
+
+
 def calculate_new_positions(clips_objects: [Clip]) -> [Clip]:
     # Organize clips by track
     logger.info("Calculating new positions for clips ...")
@@ -115,117 +142,78 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
     clips_new_positions = calculate_new_positions(clips_objects)
     num_of_tracks = Clip.get_num_tracks()
 
-    if all_tracks_gaps:
-        for track_index in range(num_of_tracks):
-            # Filter clips_new_positions for the current track
-            current_track_new_positions = [
-                clip for clip in clips_new_positions if clip.track == track_index]
+    if not all_tracks_gaps:
+        return True
+    for track_index in range(num_of_tracks):
+        # Filter clips_new_positions for the current track
+        current_track_new_positions = [
+            clip for clip in clips_new_positions if clip.track == track_index]
 
-            track_clips = [
-                clip for clip in clips_objects if clip.track == track_index]
-            target_track_index = track_index + num_of_tracks
-            logger.info(
-                f"Copying clips from track {track_index} to {target_track_index} ...")
-            for track_clip_index, track_clip in enumerate(track_clips):
-                new_clip_position = current_track_new_positions[track_clip_index]
-                select_clip(
-                    track_index,
-                    track_clip.start,
-                    track_clip.end
-                )
-                copy_clip()
-                select_clip(
-                    target_track_index,
-                    new_clip_position.start,
-                    new_clip_position.end
-                )
-                paste_clip()
-            sleep(sleep_seconds)
+        track_clips = [
+            clip for clip in clips_objects if clip.track == track_index]
+        target_track_index = track_index + num_of_tracks
         logger.info(
-            f"Removing tracks that contained gaps - {tracks_with_gaps}")
-        # Delete tracks that contained gaps
-        for track_index in tracks_with_gaps[::-1]:  # Delete from end to start
-            logger.info(f"Removing track {track_index} with gaps ...")
-            select_track(track_index)  # Select the track with gaps
-            remove_tracks()  # Remove the selected track
-            # Give some time for the command to complete
-            sleep(sleep_seconds)
+            f"Copying clips from track {track_index} to {target_track_index} ...")
+        for track_clip_index, track_clip in enumerate(track_clips):
+            new_clip_position = current_track_new_positions[track_clip_index]
+            select_clip(
+                track_index,
+                track_clip.start,
+                track_clip.end
+            )
+            copy_clip()
+            select_clip(
+                target_track_index,
+                new_clip_position.start,
+                new_clip_position.end
+            )
+            paste_clip()
+        sleep(sleep_seconds)
+    logger.info(
+        f"Removing tracks that contained gaps - {tracks_with_gaps}")
+    # Delete tracks that contained gaps
+    for track_index in tracks_with_gaps[::-1]:  # Delete from end to start
+        logger.info(f"Removing track {track_index} with gaps ...")
+        select_track(track_index)  # Select the track with gaps
+        remove_tracks()  # Remove the selected track
+        # Give some time for the command to complete
+        sleep(sleep_seconds)
 
-        # Verify that all gaps between clips were removed
-        Clip.refresh_clips()  # Fetch clips after cleanup
-        gaps = Clip.get_gaps()
-        if gaps:
-            raise Exception(
-                f"Failed to clean all gaps between clips - Gaps - {gaps}")
-        else:
-            logger.info("Completed removing spaces between clips")
+    # Verify that all gaps between clips were removed
+    Clip.refresh_clips()  # Fetch clips after cleanup
+    gaps = Clip.get_gaps()
+    if gaps:
+        raise Exception(
+            f"Failed to clean all gaps between clips - Gaps - {gaps}")
+    else:
+        logger.info("Completed removing spaces between clips")
 
-        if new_file_path:
-            logger.info(f"Saving project ...")
-            save_project_as(new_file_path)
-            sleep(sleep_seconds)
-            logger.info("Completed saving project")
+    save_project_changes(new_file_path, sleep_seconds)
     return True
 
 
 def add_labels_to_clips(new_file_path="", start_label_iterator=1, sleep_seconds=0.01):
-    """
-    Adds labels to clips in each track. Labels start from 'start_label_iterator'.
-    Labels are added to copies of clips in new tracks.
-
-    :param start_label_iterator: The starting number for labeling.
-    :param sleep_seconds: Time to sleep between processing each track.
-    :return: The number of labels added.
-    """
     logger.info("Started adding labels to clips ...")
-    Clip.refresh_clips()  # Fetch clips for the first time
+    Clip.refresh_clips()
     clips_objects = Clip.get_clips()
     num_of_tracks = Clip.get_num_tracks()
     labels_added = 0
     label_iterator = start_label_iterator
     original_tracks = Clip.get_tracks()
 
-    target_track_clips_index = 0
+    target_track_clips_index = num_of_tracks
     for track_index in range(num_of_tracks):
-        if target_track_clips_index == 0:
-            target_track_clips_index += track_index + num_of_tracks
-        track_clips: List['Clip'] = [
+        track_clips = [
             clip for clip in clips_objects if clip.track == track_index]
         logger.info(
             f"Copying clips from track {track_index} to {target_track_clips_index} ...")
         for track_clip in track_clips:
-            select_clip(track_index, track_clip.start, track_clip.end)
-            copy_clip()
-            select_clip(target_track_clips_index,
-                        track_clip.start, track_clip.end)
-            paste_clip()
-
-            do_command(f'AddLabel:')
+            copy_and_paste_clip(
+                track_index, target_track_clips_index, track_clip)
+            label_iterator = add_label_to_clip(label_iterator, sleep_seconds)
             labels_added += 1
-            pyperclip.copy(label_iterator)
-            do_command('Paste:')
-            label_iterator += 1
-            sleep(sleep_seconds)
         target_track_clips_index += 2
-    do_command(f'SelectTracks: Track=0.0')
-    do_command(f'CursTrackStart:')
-
-    # Delete old tracks
-    logger.info(f"Removing track old tracks ...")
-    for track_index in original_tracks[::-1]:
-        select_track(track_index)
-        remove_tracks()
-        sleep(sleep_seconds)
+    clean_up_tracks(original_tracks, sleep_seconds)
     logger.info(f"Completed adding labels. Total labels added: {labels_added}")
-
-    do_command(f'SelectTracks: Track=0.0')
-    do_command(f'CursTrackStart:')
-
-    logger.info(f"Saving project ...")
-    if new_file_path:
-        save_project_as(new_file_path)
-    else:
-        save_project()
-    sleep(sleep_seconds)
-    logger.info("Completed saving project")
+    save_project_changes(new_file_path, sleep_seconds)
     return labels_added
