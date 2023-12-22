@@ -19,9 +19,10 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.001):
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
-    time.sleep(sleep_seconds)
-    TOFILE.flush()
-    time.sleep(sleep_seconds)
+    if sys.platform == 'win32':
+        logger.debug("TOFILE Written")
+        TOFILE.flush()
+        time.sleep(sleep_seconds)
 
 
 def get_response(FROMFILE, sleep_seconds=0.005):
@@ -64,10 +65,10 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
         pipe_name_send = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
         pipe_name_from = '/tmp/audacity_script_pipe.from.' + str(os.getuid())
         EOL = '\n'
-        if not os.path.exists(pipe_name_send):
-            raise Exception(f"Pipe '{pipe_name_send}' does not exist")
-        if not os.path.exists(pipe_name_from):
-            raise Exception(f"Pipe '{pipe_name_from}' does not exist")
+        # if not os.path.exists(pipe_name_send):
+        #     raise Exception(f"Pipe '{pipe_name_send}' does not exist")
+        # if not os.path.exists(pipe_name_from):
+        #     raise Exception(f"Pipe '{pipe_name_from}' does not exist")
     try:
         time.sleep(sleep_seconds)
         # Open file buffer in write according to the platform
@@ -80,7 +81,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
         time.sleep(sleep_seconds)
         logger.debug(f"Accessing from pipe - '{pipe_name_from}' ...")
         # Open file buffer in text mode - must set encoding as Windows uses cp1252 by default
-        with open(pipe_name_from, 'r', encoding='utf-8') as fp:
+        with open(pipe_name_from, 'rt', encoding='utf-8', newline=EOL) as fp:
             time.sleep(sleep_seconds)
             logger.debug("Accessed from pipe")
             # Get response from Audacity using the read pipe
