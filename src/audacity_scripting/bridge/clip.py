@@ -34,15 +34,31 @@ class Clip:
             "color": self.color
         })
 
+    def copy(self):
+        """
+        Creates a copy of the Clip instance.
+        """
+        return Clip({
+            'start': self.start,
+            'end': self.end,
+            'duration': self.duration,
+            'track': self.track,
+            'color': self.color
+        })
+
     @classmethod
-    def get_gaps(cls) -> dict:
+    def get_gaps(cls, copy=True) -> dict:
+        if copy:
+            cls._gaps.copy()
         return cls._gaps
 
     @classmethod
-    def get_clips(cls) -> list:
+    def get_clips(cls, copy=False) -> list:
         """
         Gets the clips in the project
         """
+        if copy:
+            return [clip.copy() for clip in cls._clips]
         return cls._clips
 
     @classmethod

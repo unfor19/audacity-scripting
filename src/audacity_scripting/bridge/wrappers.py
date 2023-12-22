@@ -1,5 +1,3 @@
-from copy import deepcopy
-import json
 from ..utils.logger import logger
 from .pipe import do_command
 from .clip import Clip
@@ -81,7 +79,7 @@ def calculate_new_positions(clips_objects: [Clip]) -> [Clip]:
     # Organize clips by track
     logger.info("Calculating new positions for clips ...")
     tracks = {}
-    clips_old_positions = deepcopy(clips_objects)
+    clips_old_positions = [clip.copy() for clip in clips_objects]
     for clip in clips_old_positions:
         track = clip.track
         if track not in tracks:
