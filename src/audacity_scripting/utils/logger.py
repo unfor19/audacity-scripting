@@ -32,7 +32,7 @@ def create_logger(logger_level=os.getenv('AUDACITY_SCRIPTING_LOGGER_LEVEL', 'inf
 
     # Create a formatter
     formatter = logging.Formatter(
-        f'%(asctime)s - {logger_name} - %(levelname)s - %(message)s')
+        f'%(asctime)s - %(funcName)s - %(levelname)s - %(message)s')
 
     # Add the formatter to the console handler
     ch.setFormatter(formatter)
