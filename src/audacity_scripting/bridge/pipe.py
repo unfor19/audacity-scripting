@@ -19,7 +19,9 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.001):
     full_command = command + EOL
     logger.debug(f"Send: >>> '{full_command}'")
     TOFILE.write(full_command)
+    time.sleep(sleep_seconds)
     TOFILE.flush()
+    time.sleep(sleep_seconds)
 
 
 def get_response(FROMFILE, sleep_seconds=0.005):
@@ -78,7 +80,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
         time.sleep(sleep_seconds)
         logger.debug(f"Accessing from pipe - '{pipe_name_from}' ...")
         # Open file buffer in text mode - must set encoding as Windows uses cp1252 by default
-        with open(pipe_name_from, 'rt', encoding='utf-8') as fp:
+        with open(pipe_name_from, 'r', encoding='utf-8') as fp:
             time.sleep(sleep_seconds)
             logger.debug("Accessed from pipe")
             # Get response from Audacity using the read pipe
