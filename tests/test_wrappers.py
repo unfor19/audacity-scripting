@@ -15,7 +15,7 @@ class WrappersTestCase(TestCase):
         expected_file_path = Path.cwd().joinpath(
             'tests/data/expected/1.expected.remove_spaces_between_clips.aup3')
         new_file_path = open_project_copy(
-            test_file_path, 'remove_spaces_between_clips')
+            test_file_path, file_extra_label='.remove_spaces_between_clips')
         result = remove_spaces_between_clips(new_file_path)
         Clip.get_clips()
         new_clips_info = Clip.to_json()
