@@ -81,7 +81,7 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
         time.sleep(sleep_seconds)
         logger.debug(f"Accessing from pipe - '{pipe_name_from}' ...")
         # Open file buffer in text mode - must set encoding as Windows uses cp1252 by default
-        with open(pipe_name_from, 'rt', encoding='utf-8', newline=EOL) as fp:
+        with open(pipe_name_from, 'rt', encoding='utf-8') as fp:
             time.sleep(sleep_seconds)
             logger.debug("Accessed from pipe")
             # Get response from Audacity using the read pipe
