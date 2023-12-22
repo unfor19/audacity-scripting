@@ -1,7 +1,9 @@
+from typing import List
+import pyperclip
 from ..utils.logger import logger
 from .pipe import do_command
 from .clip import Clip
-from .project import open_project, save_project_as
+from .project import open_project, save_project, save_project_as
 from time import sleep
 import os
 import shutil
@@ -164,3 +166,66 @@ def remove_spaces_between_clips(new_file_path="", sleep_seconds=0.01):
             sleep(sleep_seconds)
             logger.info("Completed saving project")
     return True
+
+
+def add_labels_to_clips(new_file_path="", start_label_iterator=1, sleep_seconds=0.01):
+    """
+    Adds labels to clips in each track. Labels start from 'start_label_iterator'.
+    Labels are added to copies of clips in new tracks.
+
+    :param start_label_iterator: The starting number for labeling.
+    :param sleep_seconds: Time to sleep between processing each track.
+    :return: The number of labels added.
+    """
+    logger.info("Started adding labels to clips ...")
+    Clip.refresh_clips()  # Fetch clips for the first time
+    clips_objects = Clip.get_clips()
+    num_of_tracks = Clip.get_num_tracks()
+    labels_added = 0
+    label_iterator = start_label_iterator
+    original_tracks = Clip.get_tracks()
+
+    target_track_clips_index = 0
+    for track_index in range(num_of_tracks):
+        if target_track_clips_index == 0:
+            target_track_clips_index += track_index + num_of_tracks
+        track_clips: List['Clip'] = [
+            clip for clip in clips_objects if clip.track == track_index]
+        logger.info(
+            f"Copying clips from track {track_index} to {target_track_clips_index} ...")
+        for track_clip in track_clips:
+            select_clip(track_index, track_clip.start, track_clip.end)
+            copy_clip()
+            select_clip(target_track_clips_index,
+                        track_clip.start, track_clip.end)
+            paste_clip()
+
+            do_command(f'AddLabel:')
+            labels_added += 1
+            pyperclip.copy(label_iterator)
+            do_command('Paste:')
+            label_iterator += 1
+            sleep(sleep_seconds)
+        target_track_clips_index += 2
+    do_command(f'SelectTracks: Track=0.0')
+    do_command(f'CursTrackStart:')
+
+    # Delete old tracks
+    for track_index in original_tracks[::-1]:
+        logger.info(f"Removing track old tracks ...")
+        select_track(track_index)
+        remove_tracks()
+        sleep(sleep_seconds)
+    logger.info(f"Completed adding labels. Total labels added: {labels_added}")
+
+    do_command(f'SelectTracks: Track=0.0')
+    do_command(f'CursTrackStart:')
+
+    logger.info(f"Saving project ...")
+    if new_file_path:
+        save_project_as(new_file_path)
+    else:
+        save_project()
+    sleep(sleep_seconds)
+    logger.info("Completed saving project")
+    return labels_added
