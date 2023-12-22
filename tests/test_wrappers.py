@@ -20,7 +20,7 @@ class WrappersTestCase(TestCase):
             test_file_path, file_extra_label=file_extra_label)
 
         result = operation_func(new_file_path, *args, **kwargs)
-        logger.info(f"{file_extra_label} result: {result}")
+        logger.info(f"result: {result}")
 
         Clip.refresh_clips()
         new_clips_info_json = Clip.to_json()
