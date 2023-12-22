@@ -40,7 +40,7 @@ _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
 AUDACITY_PREFERENCES_PATH:=${HOME}/Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
-AUDACITY_INSTALL_COMMAND:=brew install --cask audacity
+AUDACITY_INSTALL_COMMAND:=brew reinstall --no-quarantine --cask audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
