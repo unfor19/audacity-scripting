@@ -1,3 +1,4 @@
+from typing import List, Dict
 from ..utils.logger import logger
 from ..utils.enums import AudacityCommandStatus, AudacityClipCommands
 import json
@@ -5,10 +6,10 @@ from .pipe import do_command
 
 
 class Clip:
-    _tracks = []
-    _clips = []
-    _gaps = dict()
-    _tracks_with_gaps = []
+    _tracks: List[int] = []
+    _clips: List['Clip'] = []
+    _gaps: Dict[int, List[Dict[str, float]]] = dict()
+    _tracks_with_gaps: List[int] = []
 
     def initialize_clip(self, raw_clip):
         self.start = round(raw_clip['start'], 5)
@@ -19,6 +20,7 @@ class Clip:
         self.end = round(self.start + self.duration, 5)
         self.track = raw_clip['track']
         self.color = raw_clip['color']
+        self.clip_id = f"{self.track};{self.start};{self.end};{self.color}"
 
     def __init__(self, raw_clip):
         self.initialize_clip(raw_clip)
@@ -137,35 +139,30 @@ class Clip:
         logger.info(f"Gaps - {cls._gaps}")
 
     @classmethod
-    def refresh_clips(cls) -> bool:
-        """
-        Gets current clips in the project
-        Returns: list of clips objects
-        """
-        # Sorting the data by track and then by start time to ensure correct ordering
-        clips_raw = Clip.get_info_clips()
-        logger.debug(f"clips_raw: {clips_raw}")
-        clips_cleaned = Clip.clean_clips_info(clips_raw)
-        logger.debug(f"clips_cleaned: {clips_cleaned}")
-        clips_parsed = Clip.parse_get_info_clips(clips_cleaned)
-        logger.debug(f"clips_parsed: {clips_parsed}")
-
-        if not clips_parsed or clips_parsed is None:
-            return False
-
-        # Re-initialize clips and tracks
-        cls._tracks = []
-        cls._clips = []
-
-        # Set Class's clips and tracks
+    def _process_parsed_clips(cls, clips_parsed: List[dict]) -> (List[int], List['Clip']):
+        """ Process parsed clips and return updated tracks and clips. """
+        tracks = []
+        clips = []
         for clip in clips_parsed:
             if clip['start'] >= 0.0 and clip['end'] > 0.0:
-                clip['_id'] = "" + \
-                    str(clip['track']) + \
-                    str(round(clip['start'], 5))
-                cls._clips.append(Clip(clip))
-                if clip['track'] not in cls._tracks:
-                    cls._tracks.append(clip['track'])
+                clips.append(Clip(clip))
+                if clip['track'] not in tracks:
+                    tracks.append(clip['track'])
+        return tracks, clips
+
+    @classmethod
+    def refresh_clips(cls) -> bool:
+        """ Refreshes the list of clips based on the current state of the project. """
+        clips_raw = cls.get_info_clips()
+        logger.debug(f"clips_raw: {clips_raw}")
+        clips_cleaned = cls.clean_clips_info(clips_raw)
+        logger.debug(f"clips_cleaned: {clips_cleaned}")
+        clips_parsed = cls.parse_get_info_clips(clips_cleaned)
+
+        if not clips_parsed:
+            return False
+
+        cls._tracks, cls._clips = cls._process_parsed_clips(clips_parsed)
         cls.calculate_clips_gaps()
-        cls._tracks_with_gaps = [track for track in cls._gaps.keys()]
+        cls._tracks_with_gaps = list(cls._gaps.keys())
         return True
