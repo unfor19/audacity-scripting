@@ -253,11 +253,11 @@ publish: .venv-publish ## Publish the package
 ###Wrapper
 ##---
 wrapper-prepare-test:
-	$(MAKE) audacity-kill || true
-	$(MAKE) venv-test-clean
-	$(MAKE) audacity-start
+	$(MAKE) -s audacity-kill || true
+	$(MAKE) -s venv-test-clean
+	$(MAKE) -s audacity-start
 
 wrapper-run-test: wrapper-prepare-test
 	sleep 6
-	$(MAKE) venv-test
+	$(MAKE) -s venv-test
 # --- Wrapper --- END --------------------------------------------------------------
