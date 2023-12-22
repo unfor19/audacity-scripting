@@ -17,7 +17,12 @@ jobs:
   tests:
     name: Tests
     timeout-minutes: 10
-    runs-on: windows-2022
+    strategy:
+      matrix:
+        include:
+          - OS: windows-2022
+          - OS: macos-latest
+    runs-on: ${{ matrix.OS }}
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Set up Python
@@ -28,13 +33,14 @@ jobs:
       - name: Prepare .VENV directory
         run: make venv-prepare
       - name: Install Python dependencies
-        run: make venv-install PACKAGE_NAME=pywin32
+        run: make venv-install
       - name: Install in Edit mode
         run: make venv-install-edit
-      - name: Install Tests Requirements
-        run: |
-          make audacity-download && \
-          make audacity-install
+      - name: Download Audacity
+        if: matrix.OS == 'windows-2022'
+        run: make audacity-download
+      - name: Install Audacity
+        run: make audacity-install
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity

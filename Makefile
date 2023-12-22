@@ -20,6 +20,7 @@ AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
+AUDACITY_INSTALL_COMMAND:=powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_PREFERENCES_PATH:=${APPDATA}/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
@@ -32,18 +33,14 @@ PIPELIST_DOWNLOAD_URL:=https://download.sysinternals.com/files/PipeList.zip
 PIPELIST_EXTRACTED_DIR_PATH:=${ROOT_DIR}/.pipelist
 PIPELIST_EXTRACTED_FILE_PATH:=${PIPELIST_EXTRACTED_DIR_PATH}/pipelist64.exe
 
-# TODO: Set it - currently getting it from GitHub Actions on Windows
-ifeq (${CI},true)
-AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
-endif
-
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
-AUDACITY_PREFERENCES_PATH:=${HOME}//Library/Application Support/audacity/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=${HOME}/Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
+AUDACITY_INSTALL_COMMAND:=brew install --cask audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
@@ -123,9 +120,9 @@ audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHEC
 
 audacity-download: .audacity-download audacity-verify-checksum ## Download Audacity
 
-audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
+audacity-install: validate-AUDACITY_INSTALL_COMMAND validate-AUDACITY_BIN_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
-	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
+	${AUDACITY_INSTALL_COMMAND}
 	@echo "Waiting for Audacity to complete installation ..."
 	@until ls ${AUDACITY_BIN_PATH} ; do echo "Sleeping ..." && sleep 1 ; done
 	@if [[  "${CI}" = "true" ]]; then \
