@@ -22,7 +22,6 @@ def send_command(TOFILE, EOL, command, sleep_seconds=0.001):
     if sys.platform == 'win32':
         logger.debug("TOFILE Written")
         TOFILE.flush()
-        logger.debug("TOFILE Flushed")
         time.sleep(sleep_seconds)
 
 
@@ -66,7 +65,10 @@ def do_command_(CMD='GetInfo: Preferences', sleep_seconds=0.007):
         pipe_name_send = '/tmp/audacity_script_pipe.to.' + str(os.getuid())
         pipe_name_from = '/tmp/audacity_script_pipe.from.' + str(os.getuid())
         EOL = '\n'
-    logger.debug(f"Trying to access pipe {pipe_send}")
+        if not os.path.exists(pipe_name_send):
+            raise Exception(f"Pipe '{pipe_name_send}' does not exist")
+        if not os.path.exists(pipe_name_from):
+            raise Exception(f"Pipe '{pipe_name_from}' does not exist")
     try:
         time.sleep(sleep_seconds)
         # Open file buffer in write according to the platform

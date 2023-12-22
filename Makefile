@@ -20,10 +20,12 @@ AUDACITY_SRC_CONFIG_PATH:=${ROOT_DIR}/audacity.cfg
 ifneq (,$(findstring NT, $(UNAME)))
 _OS:=windows
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/Scripts/activate.bat
+
 AUDACITY_BIN_PATH:="C:\Program Files\Audacity\audacity.exe"
 AUDACITY_PREFERENCES_PATH:=${APPDATA}/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=powershell -c "taskkill /F /IM Audacity.exe /T"
 AUDACITY_DOWNLOAD_PATH:=${ROOT_DIR}/audacity-installer.exe
+AUDACITY_INSTALL_COMMAND:=powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
 AUDACITY_CHECKSUM:=D7BD5AE775DB9E42DA6058DA4A65A8F898A46CE467D9F21585084566213C36BF
 AUDACITY_DOWNLOAD_URL:=https://github.com/audacity/audacity/releases/download/Audacity-${AUDACITY_VERSION}/audacity-win-${AUDACITY_VERSION}-64bit.exe
 PIPELIST_DOWNLOAD_PATH:=${ROOT_DIR}/pipelist.zip
@@ -32,18 +34,14 @@ PIPELIST_DOWNLOAD_URL:=https://download.sysinternals.com/files/PipeList.zip
 PIPELIST_EXTRACTED_DIR_PATH:=${ROOT_DIR}/.pipelist
 PIPELIST_EXTRACTED_FILE_PATH:=${PIPELIST_EXTRACTED_DIR_PATH}/pipelist64.exe
 
-# TODO: Set it - currently getting it from GitHub Actions on Windows
-ifeq (${CI},true)
-AUDACITY_PREFERENCES_PATH:=/C/Users/runneradmin/AppData/Roaming/audacity/audacity.cfg
-endif
-
 endif
 # macOS
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
-AUDACITY_PREFERENCES_PATH:=${HOME}//Library/Application Support/audacity/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=${HOME}/Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
+AUDACITY_INSTALL_COMMAND:=brew reinstall --no-quarantine --cask audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
 # --- OS Settings --- END --------------------------------------------------------------
@@ -123,9 +121,9 @@ audacity-verify-checksum: validate-AUDACITY_DOWNLOAD_PATH validate-AUDACITY_CHEC
 
 audacity-download: .audacity-download audacity-verify-checksum ## Download Audacity
 
-audacity-install: validate-AUDACITY_DOWNLOAD_PATH ## Install Audacity
+audacity-install: validate-AUDACITY_INSTALL_COMMAND validate-AUDACITY_BIN_PATH ## Install Audacity
 	@echo "Installing Audacity ..."
-	powershell -c "${AUDACITY_DOWNLOAD_PATH} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /NOCANCEL /SP- /LOG=${ROOT_DIR}/audacity-installer.log"
+	${AUDACITY_INSTALL_COMMAND}
 	@echo "Waiting for Audacity to complete installation ..."
 	@until ls ${AUDACITY_BIN_PATH} ; do echo "Sleeping ..." && sleep 1 ; done
 	@if [[  "${CI}" = "true" ]]; then \
@@ -157,7 +155,7 @@ audacity-print-config: validate-AUDACITY_PREFERENCES_PATH ## Print Audacity conf
 audacity-start: validate-AUDACITY_BIN_PATH ## Start Audacity GUI app
 	@echo Starting Audacity ...
 	@${AUDACITY_BIN_PATH} &
-	@if [[ "${_CI}" = "true" ]]; then \
+	@if [[ "${CI}" = "true" ]]; then \
 		echo "Sleeping 10 seconds to allow Audacity to start the pipes ..." ; \
 		sleep 10 ; \
 		echo "Hopefully Audacity is up" ; \
@@ -255,11 +253,11 @@ publish: .venv-publish ## Publish the package
 ###Wrapper
 ##---
 wrapper-prepare-test:
-	$(MAKE) audacity-kill || true
-	$(MAKE) venv-test-clean
-	$(MAKE) audacity-start
+	$(MAKE) -s audacity-kill || true
+	$(MAKE) -s venv-test-clean
+	$(MAKE) -s audacity-start
 
 wrapper-run-test: wrapper-prepare-test
 	sleep 6
-	$(MAKE) venv-test
+	$(MAKE) -s venv-test
 # --- Wrapper --- END --------------------------------------------------------------

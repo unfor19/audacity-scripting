@@ -1,8 +1,10 @@
+from tracemalloc import start
 import click
+from pkg_resources import require
 
 from ..bridge.pipe import do_command as _do_command
 from .config import pass_config
-from ..bridge.wrappers import remove_spaces_between_clips, open_project_copy
+from ..bridge.wrappers import add_labels_to_clips, remove_spaces_between_clips, open_project_copy
 from ..utils.logger import logger
 from ..utils.version import get_version
 
@@ -10,6 +12,7 @@ from ..utils.version import get_version
 class AliasedGroup(click.Group):
     def get_command(self, ctx, cmd_name):
         app_aliases = {
+            "a": "add",
             "c": "clean",
             "t": "testing",
             "r": "raw",
@@ -17,8 +20,9 @@ class AliasedGroup(click.Group):
             "v": "version"
         }
         action_aliases = {
-            "s": "spaces",
             "c": "command",
+            "s": "spaces",
+            "l": "labels",
             "p": "print"
         }
         if len(cmd_name) == 2:
@@ -55,16 +59,38 @@ def cli(config, ci):
 
 @cli.command()
 @click.option(
-    '--file_path', '-p', required=True, show_default=False, type=str
+    '--file_path', '-p', required=True, show_default=False, type=str,
+    help="The absolute path to the project file"
 )
 def clean_spaces(file_path):
-    """Alias: cs\n
-    Clean spaces between clips in a given project\n
+    """Alias: cs\nClean spaces between clips in a given project\n
     File Path must be absolute
     """
     new_file_path = open_project_copy(file_path)
     logger.debug(new_file_path)
     result = remove_spaces_between_clips()
+    if result:
+        print(new_file_path)
+    else:
+        raise Exception("Failed to remove spaces between clips")
+
+
+@cli.command()
+@click.option(
+    '--file_path', '-p', required=True, show_default=False, type=str,
+    help="The absolute path to the project file"
+)
+@click.option(
+    '--start_label_iterator', '-i', required=True, default=1, type=int,
+    help="The starting number for the label iterator"
+)
+def add_labels(file_path, start_label_iterator):
+    """Alias: al\nAdd labels to clips in a given project\n
+    File Path must be absolute
+    """
+    new_file_path = open_project_copy(file_path)
+    logger.debug(new_file_path)
+    result = add_labels_to_clips(start_label_iterator=start_label_iterator)
     if result:
         print(new_file_path)
     else:
