@@ -32,7 +32,7 @@ env:
 jobs:
   tests:
     name: Tests
-    timeout-minutes: 10
+    timeout-minutes: 20
     strategy:
       matrix:
         include:
