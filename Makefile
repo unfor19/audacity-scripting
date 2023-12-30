@@ -67,9 +67,11 @@ endif
 ifeq (${_OS},windows)
 SHELL:=${VENV_BIN_ACTIVATE} && ${SHELL}
 endif
-
-
 endif
+endif
+
+ifndef PACKAGE_VERSION
+PACKAGE_VERSION:=99.99.99rc99
 endif
 
 # Removes blank rows - fgrep -v fgrep

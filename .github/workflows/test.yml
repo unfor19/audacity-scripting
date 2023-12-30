@@ -92,3 +92,9 @@ jobs:
         run: make wrapper-prepare-test
       - name: Run CLI Tests
         run: make venv-test-cli
+      - name: Build on Linux
+        if: matrix.OS == 'ubuntu-22.04'
+        run: |
+          make validate-release-version && \
+          make build && \
+          make validate-release-package

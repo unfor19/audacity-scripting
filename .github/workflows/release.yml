@@ -54,7 +54,7 @@ jobs:
         run: |
           echo -n $PACKAGE_VERSION > ./version
       - name: Validate Release Version
-        run: make validate-release-version PACKAGE_NAME=${PACKAGE_VERSION}
+        run: make validate-release-version
       - name: Build Package
         run: make build
       - name: Validate Package
