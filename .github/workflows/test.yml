@@ -17,7 +17,6 @@ on:
           - "ubuntu-22.04"
           - "windows-2022"
           - "macos-12"
-          - "linux-utm-macos-m1"
   push:
     paths-ignore:
       - "README.md"
@@ -40,13 +39,11 @@ jobs:
         include:
           - OS: windows-2022
           - OS: macos-12
-          - OS: linux-utm-macos-m1
           - OS: ubuntu-22.04
     runs-on: ${{ matrix.OS }}
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Set up Python
-        if: matrix.OS != 'linux-utm-macos-m1'
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
@@ -73,7 +70,7 @@ jobs:
           limit-access-to-actor: true
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_os == matrix.OS && inputs.tmate_session && github.actor == 'unfor19' }}
       - name: Start Xvfb
-        if: matrix.OS == 'linux-utm-macos-m1' || matrix.OS == 'ubuntu-22.04'
+        if: matrix.OS == 'ubuntu-22.04'
         run: |
           Xvfb :99 -ac &
           echo "DISPLAY=:99" >> $GITHUB_ENV
