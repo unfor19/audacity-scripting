@@ -73,7 +73,7 @@ jobs:
           limit-access-to-actor: true
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_os == matrix.OS && inputs.tmate_session && github.actor == 'unfor19' }}
       - name: Start Xvfb
-        if: matrix.OS == 'linux-utm-macos-m1'
+        if: matrix.OS == 'linux-utm-macos-m1' || matrix.OS == 'ubuntu-22.04'
         run: |
           Xvfb :99 -ac &
           echo "DISPLAY=:99" >> $GITHUB_ENV
