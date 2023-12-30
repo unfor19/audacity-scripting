@@ -28,7 +28,7 @@ jobs:
         run: make venv-install-edit
       - name: Prepare source file
         run: make wrapper-generate-help
-      - uses: unfor19/replacer-action@v1.0.6
+      - uses: unfor19/replacer-action@master
         name: Update README.md file
         with:
           src-file-path: "help_menu.log"
