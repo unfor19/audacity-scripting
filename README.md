@@ -16,7 +16,7 @@ https://github.com/unfor19/audacity-scripting/assets/15122452/080e772c-3e40-424b
   ```bash
   sudo add-apt-repository universe && \
   sudo apt-get update && \
-  sudo apt-get install -y xclip libfuse2 libjack0
+  sudo apt-get install -y xclip libfuse2 libgtk2.0 libasound2 libjack-jackd2
   ```
 - Audacity - Enable [mod-script-pipe](https://manual.audacityteam.org/man/scripting.html)
   - Run Audacity
