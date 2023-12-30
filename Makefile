@@ -271,4 +271,12 @@ wrapper-prepare-test:
 wrapper-run-test: wrapper-prepare-test
 	sleep 6
 	$(MAKE) -s venv-test
+
+.wrapper-venv-build:
+	@$(MAKE) -s validate-release-version && \
+		$(MAKE) -s build && \
+		$(MAKE) -s validate-release-package
+
+wrapper-build: .wrapper-venv-build ## Build the package and verify it
+
 # --- Wrapper --- END --------------------------------------------------------------

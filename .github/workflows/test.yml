@@ -93,7 +93,4 @@ jobs:
       - name: Run CLI Tests
         run: make venv-test-cli
       - name: Build Python Package
-        run: |
-          make validate-release-version && \
-          make build && \
-          make validate-release-package
+        run: make wrapper-build
