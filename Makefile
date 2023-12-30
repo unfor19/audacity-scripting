@@ -174,7 +174,8 @@ audacity-test-pipe: ## Test Audacity pipe
 	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
 audacity-kill: validate-AUDACITY_KILL_COMMAND ## Kill Audacity
-	${AUDACITY_KILL_COMMAND}
+	@ps -ax | grep audacity
+	@${AUDACITY_KILL_COMMAND}
 
 audacity-restart: audacity-kill audacity-start
 
