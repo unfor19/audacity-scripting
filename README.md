@@ -1,5 +1,7 @@
 # audacity-scripting
 
+> **IMPORTANT**: This is still a Work In Progress (WIP), some features might not be stable.
+
 [![PyPI](https://img.shields.io/pypi/v/audacity-scripting?label=PyPi)](https://pypi.org/project/audacity-scripting)
 
 A Python package for automating Audacity tasks based on [Audacity's Scripting Reference](https://manual.audacityteam.org/man/scripting_reference.html).
