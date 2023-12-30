@@ -1,0 +1,40 @@
+name: Update README.md
+on:
+  push:
+    branches:
+      - main
+    # IMPORTANT: Avoids endless loop
+    paths-ignore:
+      - "README.md"
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          cache: "pip"
+      - name: Prepare .VENV directory
+        run: make venv-prepare
+      - name: Install Python dependencies
+        run: make venv-install
+      - name: Install in Edit mode
+        run: make venv-install-edit
+      - name: Prepare source file
+        run: make wrapper-generate-help
+      - uses: unfor19/replacer-action@v1.0.6
+        name: Update README.md file
+        with:
+          src-file-path: "test_results.log"
+          dst-file-path: "README.md"
+          start-value: "<!-- available_commands_end -->"
+          end-value: "<!-- available_commands_start -->"
+          git-user-name: "replacer-action"
+          git-user-email: "replacer-action@meirg.co.il"
+          git-commit-msg: "Updated by GitHub Actions"
+          git-skip-commit: false
+          git-skip-push: false
+          create-backup: true
