@@ -208,6 +208,11 @@ def add_labels_to_clips(new_file_path="", start_label_iterator=1, sleep_seconds=
         for track_clip in track_clips:
             copy_and_paste_clip(
                 track_index, target_track_clips_index, track_clip)
+            select_clip(
+                target_track_clips_index,
+                track_clip.start,
+                track_clip.end
+            )
             label_iterator = add_label_to_clip(label_iterator, sleep_seconds)
             labels_added += 1
         target_track_clips_index += 2
