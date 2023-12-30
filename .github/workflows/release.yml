@@ -4,7 +4,7 @@ name: Release to PyPi
 
 on:
   release:
-    types: [created, published]
+    types: [created]
   workflow_dispatch:
     inputs:
       PACKAGE_VERSION:
@@ -45,6 +45,7 @@ jobs:
       - name: Set Release Version - GitHub Release
         if: github.event_name != 'workflow_dispatch'
         run: |
+          echo "github.event_name = ${{ github.event_name }}"
           export PACKAGE_VERSION=${GITHUB_REF_SLUG}
           echo -n $PACKAGE_VERSION > ./version
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
