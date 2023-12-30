@@ -63,9 +63,8 @@ jobs:
       - name: Install Linux Requirements
         if: matrix.OS == 'ubuntu-22.04'
         run: |
-          sudo add-apt-repository universe && \
           sudo apt-get update && \
-          sudo apt-get install -y xclip
+          sudo apt-get install -y xvfb
       - name: Install Audacity
         run: make audacity-install
       - name: Setup tmate session
@@ -73,6 +72,11 @@ jobs:
         with:
           limit-access-to-actor: true
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_os == matrix.OS && inputs.tmate_session && github.actor == 'unfor19' }}
+      - name: Start Xvfb
+        if: matrix.OS == 'linux-utm-macos-m1'
+        run: |
+          Xvfb :99 -ac &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity
