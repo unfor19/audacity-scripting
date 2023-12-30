@@ -12,12 +12,6 @@ https://github.com/unfor19/audacity-scripting/assets/15122452/080e772c-3e40-424b
 
 - Install [Python 3.9+](https://www.python.org/downloads/)
 - Install [Audacity 3.4.2+](https://www.audacityteam.org/download/)
-- **Linux**:
-  ```bash
-  sudo add-apt-repository universe && \
-  sudo apt-get update && \
-  sudo apt-get install -y xclip libfuse2 libgtk2.0 libasound2 libjack-jackd2-0 libportaudio2
-  ```
 - Audacity - Enable [mod-script-pipe](https://manual.audacityteam.org/man/scripting.html)
   - Run Audacity
   - Go into Edit > Preferences > Modules
@@ -27,6 +21,8 @@ https://github.com/unfor19/audacity-scripting/assets/15122452/080e772c-3e40-424b
   - This establishes that Audacity is finding mod-script pipe and that the version is compatible.
 
 ## Installation
+
+Supported OS: Windows, Linux, and macOS
 
 ```
 python -m pip install audacity-scripting
