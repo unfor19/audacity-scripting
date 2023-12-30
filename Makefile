@@ -164,7 +164,9 @@ audacity-print-config: validate-AUDACITY_PREFERENCES_PATH ## Print Audacity conf
 audacity-start: validate-AUDACITY_BIN_PATH ## Start Audacity GUI app
 	@echo Starting Audacity ...
 	@${AUDACITY_BIN_PATH} &
-	@until ps -ax | grep ${AUDACITY_BIN_PATH} ; do echo "Sleeping ..." && sleep 1 ; done
+	@if [[ "${_OS}" != "windows" ]]; then \
+		until ps -ax | grep ${AUDACITY_BIN_PATH} ; do echo "Sleeping ..." && sleep 1 ; done ;\
+	fi
 	@if [[ "${CI}" = "true" ]]; then \
 		echo "Sleeping 10 seconds to allow Audacity to start the pipes ..." ; \
 		sleep 10 ; \
