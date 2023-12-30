@@ -3,6 +3,7 @@
 !.*ignore*
 *.wiki
 !.github
+*.log
 
 # windows
 *.exe

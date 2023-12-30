@@ -279,4 +279,10 @@ wrapper-run-test: wrapper-prepare-test
 
 wrapper-build: .wrapper-venv-build ## Build the package and verify it
 
+.wrapper-venv-generate-help:
+	audacity_scripting --help > help_menu.log
+
+wrapper-generate-help: .wrapper-venv-generate-help ## Generate help for replacer
+
+
 # --- Wrapper --- END --------------------------------------------------------------
