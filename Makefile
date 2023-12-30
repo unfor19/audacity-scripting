@@ -39,7 +39,7 @@ endif
 ifneq (,$(findstring Darwin, $(UNAME)))
 _OS:=macos
 AUDACITY_BIN_PATH:=/Applications/Audacity.app/Contents/MacOS/Wrapper
-AUDACITY_PREFERENCES_PATH:=${HOME}/.config/audacity/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=${HOME}/Library/Application Support/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall Audacity
 AUDACITY_INSTALL_COMMAND:=brew reinstall --no-quarantine --cask audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
@@ -47,7 +47,7 @@ endif
 
 ifneq (,$(findstring Linux, $(UNAME)))
 _OS:=linux
-AUDACITY_PREFERENCES_PATH:=${HOME}/Library/Application Support/audacity/audacity.cfg
+AUDACITY_PREFERENCES_PATH:=${HOME}/.config/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 AUDACITY_CHECKSUM:=D3A3695B02F99934B24B0D7587CBC4544676D9244FA2B65E63D3D8245C71D1E5
