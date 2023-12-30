@@ -7,6 +7,9 @@ on:
     paths-ignore:
       - "README.md"
 
+permissions:
+  contents: write
+
 jobs:
   update-readme:
     runs-on: ubuntu-22.04
@@ -30,8 +33,8 @@ jobs:
         with:
           src-file-path: "help_menu.log"
           dst-file-path: "README.md"
-          start-value: "<!-- available_commands_end -->"
-          end-value: "<!-- available_commands_start -->"
+          start-value: "<!-- available_commands_start -->"
+          end-value: "<!-- available_commands_end -->"
           git-user-name: "replacer-action"
           git-user-email: "replacer-action@meirg.co.il"
           git-commit-msg: "Updated by GitHub Actions"
