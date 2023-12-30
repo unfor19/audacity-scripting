@@ -54,14 +54,14 @@ jobs:
       - name: Install in Edit mode
         run: make venv-install-edit
       - name: Download Audacity
-        if: matrix.OS == 'windows-2022' || matrix.OS == 'ubuntu-22.04'
+        if: matrix.OS == 'windows-2022'
         run: make audacity-download
       - name: Install Linux Requirements
         if: matrix.OS == 'ubuntu-22.04'
         run: |
           sudo add-apt-repository universe && \
           sudo apt-get update && \
-          sudo apt-get install -y xclip libfuse2 libgtk2.0 libasound2 libjack-jackd2-0 libportaudio2 portaudio19-dev
+          sudo apt-get install -y xclip
       - name: Install Audacity
         run: make audacity-install
       - name: Setup tmate session

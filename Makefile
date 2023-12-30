@@ -50,11 +50,8 @@ _OS:=linux
 AUDACITY_PREFERENCES_PATH:=${HOME}/.config/audacity/audacity.cfg
 AUDACITY_KILL_COMMAND:=killall audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
-AUDACITY_CHECKSUM:=D3A3695B02F99934B24B0D7587CBC4544676D9244FA2B65E63D3D8245C71D1E5
-AUDACITY_DOWNLOAD_URL:=https://github.com/audacity/audacity/releases/download/Audacity-${AUDACITY_VERSION}/audacity-linux-${AUDACITY_VERSION}-x64.AppImage
-AUDACITY_DOWNLOAD_PATH:=${ROOT_DIR}/audacity.appimage
-AUDACITY_BIN_PATH:=${AUDACITY_DOWNLOAD_PATH}
-AUDACITY_INSTALL_COMMAND:=chmod a+x ${AUDACITY_BIN_PATH}
+AUDACITY_BIN_PATH:=/usr/bin/audacity
+AUDACITY_INSTALL_COMMAND:=sudo add-apt-repository -y ppa:ubuntuhandbook1/audacity && sudo apt-get update && sudo apt-get install -y audacity audacity-data
 endif
 # --- OS Settings --- END --------------------------------------------------------------
 
