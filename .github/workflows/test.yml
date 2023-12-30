@@ -46,7 +46,7 @@ jobs:
         run: |
           sudo add-apt-repository universe && \
           sudo apt-get update && \
-          sudo apt-get install -y xclip libfuse2
+          sudo apt-get install -y xclip libfuse2 libjack0
       - name: Install Audacity
         run: make audacity-install
       - name: Start Audacity for the first time
