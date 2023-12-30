@@ -2,6 +2,21 @@ name: Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      tmate_session:
+        type: boolean
+        description: "tmate session"
+        required: false
+        default: false
+      tmate_os:
+        type: choice
+        description: "tmate os"
+        required: false
+        default: "ubuntu-22.04"
+        options:
+          - "ubuntu-22.04"
+          - "windows-2022"
+          - "macos-12"
   push:
     paths-ignore:
       - "README.md"
@@ -17,12 +32,14 @@ env:
 jobs:
   tests:
     name: Tests
-    timeout-minutes: 10
+    timeout-minutes: 20
     strategy:
+      fail-fast: false
       matrix:
         include:
           - OS: windows-2022
-          - OS: macos-latest
+          - OS: macos-12
+          - OS: ubuntu-22.04
     runs-on: ${{ matrix.OS }}
     steps:
       - uses: actions/checkout@v4.1.1
@@ -40,8 +57,23 @@ jobs:
       - name: Download Audacity
         if: matrix.OS == 'windows-2022'
         run: make audacity-download
+      - name: Install Linux Requirements
+        if: matrix.OS == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update && \
+          sudo apt-get install -y xvfb
       - name: Install Audacity
         run: make audacity-install
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_os == matrix.OS && inputs.tmate_session && github.actor == 'unfor19' }}
+      - name: Start Xvfb - For Running GUI Apps on Linux
+        if: matrix.OS == 'ubuntu-22.04'
+        run: |
+          Xvfb :99 -ac &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
       - name: Start Audacity for the first time
         run: make audacity-start
       - name: Kill Audacity

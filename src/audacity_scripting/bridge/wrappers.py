@@ -1,5 +1,4 @@
 from typing import List
-import pyperclip
 from ..utils.logger import logger
 from .pipe import do_command
 from .clip import Clip
@@ -87,8 +86,7 @@ def copy_and_paste_clip(source_track_index, target_track_index, clip):
 
 def add_label_to_clip(label_iterator, sleep_seconds=0.01):
     do_command('AddLabel:')
-    pyperclip.copy(label_iterator)
-    do_command('Paste:')
+    do_command(f'SetLabel: Label="{label_iterator}" Text="{label_iterator}"')
     sleep(sleep_seconds)
     return label_iterator + 1
 

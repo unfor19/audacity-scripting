@@ -8,6 +8,10 @@
 *.exe
 *.zip
 
+# linux
+*.appimage
+*.AppImage
+
 # python
 *__pycache__
 ENV/

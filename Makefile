@@ -44,6 +44,15 @@ AUDACITY_KILL_COMMAND:=killall Audacity
 AUDACITY_INSTALL_COMMAND:=brew reinstall --no-quarantine --cask audacity
 VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
 endif
+
+ifneq (,$(findstring Linux, $(UNAME)))
+_OS:=linux
+AUDACITY_PREFERENCES_PATH:=${HOME}/.config/audacity/audacity.cfg
+AUDACITY_KILL_COMMAND:=killall audacity
+VENV_BIN_ACTIVATE:=${VENV_DIR_PATH}/bin/activate
+AUDACITY_BIN_PATH:=/usr/bin/audacity
+AUDACITY_INSTALL_COMMAND:=sudo add-apt-repository -y ppa:ubuntuhandbook1/audacity && sudo apt-get update && sudo apt-get install -y audacity audacity-data
+endif
 # --- OS Settings --- END --------------------------------------------------------------
 
 SHELL:=${BASH_PATH}
@@ -158,14 +167,14 @@ audacity-start: validate-AUDACITY_BIN_PATH ## Start Audacity GUI app
 	@if [[ "${CI}" = "true" ]]; then \
 		echo "Sleeping 10 seconds to allow Audacity to start the pipes ..." ; \
 		sleep 10 ; \
-		echo "Hopefully Audacity is up" ; \
+		echo "Completed sleeping" ; \
 	fi
 
 audacity-test-pipe: ## Test Audacity pipe
 	python ${ROOT_DIR}/scripts/audacity_pipetest.py
 
 audacity-kill: validate-AUDACITY_KILL_COMMAND ## Kill Audacity
-	${AUDACITY_KILL_COMMAND}
+	@${AUDACITY_KILL_COMMAND}
 
 audacity-restart: audacity-kill audacity-start
 
