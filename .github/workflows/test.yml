@@ -46,7 +46,7 @@ jobs:
         run: |
           sudo add-apt-repository universe && \
           sudo apt-get update && \
-          sudo apt-get install -y xclip libfuse2 libgtk2.0 libasound2 libjack-jackd2-0
+          sudo apt-get install -y xclip libfuse2 libgtk2.0 libasound2 libjack-jackd2-0 portaudio19-dev
       - name: Install Audacity
         run: make audacity-install
       - name: Start Audacity for the first time
