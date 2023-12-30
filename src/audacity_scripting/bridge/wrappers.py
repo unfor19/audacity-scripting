@@ -86,7 +86,7 @@ def copy_and_paste_clip(source_track_index, target_track_index, clip):
 
 def add_label_to_clip(label_iterator, sleep_seconds=0.01):
     do_command('AddLabel:')
-    do_command(f'SetLabel: Label={label_iterator}.0 Text={label_iterator}')
+    do_command(f'SetLabel: Label="{label_iterator}.0" Text="{label_iterator}"')
     sleep(sleep_seconds)
     return label_iterator + 1
 
@@ -214,6 +214,11 @@ def add_labels_to_clips(new_file_path="", start_label_iterator=1, sleep_seconds=
                 track_clip.end
             )
             label_iterator = add_label_to_clip(label_iterator, sleep_seconds)
+            select_clip(
+                target_track_clips_index,
+                track_clip.start,
+                track_clip.end
+            )
             labels_added += 1
         target_track_clips_index += 2
     clean_up_tracks(original_tracks, sleep_seconds)
